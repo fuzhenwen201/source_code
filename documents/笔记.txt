@@ -1,0 +1,95 @@
+﻿http://www.google.com/ncr
+
+1、安装openjdk-8-jdk
+    sudo add-apt-repository ppa:openjdk-r/ppa
+	sudo apt-get update
+	sudo apt-get install openjdk-8-jdk
+	sudo update-alternatives --config java
+	sudo update-alternatives --config javac
+
+2、安装mysql
+	sudo apt-get install mysql-server （账户:root,密码:root）
+	mysql> grant all on *.* to 'root'@'%'identified by 'root';
+		
+   将libposition.tar.gz 拷贝到/usr/lib/mysql/plugin目录下
+   sudo tar -xvf libposition.tar.gz
+   将libhiredis.so.0.13 拷贝到 /usr/lib目录并
+   sudo ln -s libhiredis.so.0.13 libhiredis.so
+   mysql> grant all on *.* to 'root'@'%'identified by 'root';
+   mysql>  CREATE FUNCTION redis_hset RETURNS STRING SONAME 'libposition_management.so';
+   sudo service mysql restart
+3、安装redis
+	sudo apt-get install redis-server
+	修改redis.conf
+		sudo vim /etc/redis/redis.conf (1.取消注释requirepass  2.注释bind 127.0.0.1)
+	sudo service redis-server restart
+
+4、安装rabbitmq	
+	sudo apt-get install rabbitmq-server
+	sudo rabbitmq-plugins enable rabbitmq_management
+	sudo rabbitmqctl add_vhost /demo
+	sudo rabbitmqctl add_user demo demo
+	sudo rabbitmqctl set_permissions -p /demo demo ".*" ".*" ".*"
+    sudo rabbitmqctl set_user_tags demo administrator
+	sudo service rabbitmq-server restart
+
+5、jenkins
+{
+	安装java
+	sudo apt-get install openjdk-7-jdk
+
+	安装tomcat7
+	下载apache-tomcat-7.0.77.tar.gz包 解压
+
+	安装jenkins
+	sudo apt-get install jenkins
+	cp /usr/share/jenkins/jenkins.war tomcat7/webapps
+
+	启动tomcat7 ./bin/startup.sh
+
+	访问http://ip:8080/jenkins
+}
+
+6、register
+	sudo vi /etc/docker/daemon.json 写入{ "insecure-registries":["192.168.1.148:5000"] }
+	重启docker
+
+valgrind --tool=memcheck --log-file=trading.log --leak-check=full --show-reachable=yes ./tradingengine --flagfile=default.cfg
+	
+7、linux添加用户和sudo权限
+sudo adduser kevin
+sudo vim  /etc/ssh/sshd_config
+sudo vim /etc/sudoers
+sudo service ssh restart
+sudo su - kevin
+mkdir .ssh
+XSHELL(Tools->New User Key Wizard->Next->Next-Save as a file)生成秘钥对
+mv kevi.pub .ssh/authorized_keys
+chown -R kevin:kevin .ssh    将.ssh 文件的所属用户改为kevin
+
+SHOW VARIABLES LIKE 'event_scheduler'; 
+sed -i 's/V1.0.2.jar/V1.0.3.jar/g' docker-compose.yml
+sed -i 's/20170807/20170818/g' hiredis.sql
+
+8、TCP 
+sudo tcpdump -i eth0 -nxx port 5031   //tcp抓包命令 网络
+sudo tcpdump -i lo -nxx port 5031     // 本地
+netstat -antp | grep "192.168.1.101"
+
+mysql -h 10.10.10.20 -P 3307 -uroot -proot
+redis-cli -h 35.154.147.154 -p 6379 -a hugo123456
+
+git clone失败：
+git clone --depth 1 git@ec2-52-221-25-114.ap-southeast-1.compute.amazonaws.com:tradingplatformserver/alphadeploy.git
+git fetch --unshallow
+
+rabbitmqctl set_policy 241policy all ^t_node_grp '{"federation-upstream-set":"all"}'
+rabbitmqctl set_parameter federation-upstream 241_federation '{"uri":"amqp://demo:demo@52.66.45.64","ack-mode":"no-ack","trust-user-id":false}'
+
+批量删除redis中数据  redis-cli -a blockchain keys "46*" | xargs redis-cli -a blockchain del
+
+{"userid":"1","symbol":"RKT/BTC","side":1,"price":10.101,"number":0.124}
+
+
+
+	

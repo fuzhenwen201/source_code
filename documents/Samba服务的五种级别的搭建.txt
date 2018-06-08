@@ -1,0 +1,896 @@
+Samba有五种安全级别，它们分别是：
+1.share：不需要samba账户就可登陆samba服务器
+
+2.user：需要添加samba账户才可以登陆samba服务器
+
+3.server:由另外一台samba服务器来对用户进行身份验证。
+
+4.domain:把samba服务器加入到NT域，由NT的域控制器来进行身份验证。
+
+5.ADS：Active Directory Service，活动目录服务，它是samba3.0中新增的身份验证方式。采用ADS验证方式，samba   服务器集成到活动目录中。
+
+以上是它的五个运行级别；share,user这二个级别适合用小型部门，如网吧、企业内部局域网等，也是samba常用的级别。
+
+(一) samba组件安装：
+
+（1）首先用“rpm –qa |grep samba”命令检验系统samba服务是否安装。
+
+#rpm –qa |grep samba
+
+samba-common-3.0.0.15.i386.rpm
+
+samba-client-3.0.0-15.i386.rpm
+
+samba-3.0.0-15.i386.rpm
+
+（2）如果没有显示samba（版本）信息，则说明没有安装，利用“RedHat Linux安装光盘”里自带的RPM包进行安装（也可自己在网上下载相关的版本包进行安装）。
+
+# rpm -ivh samba-common-3.0.0.15.i386.rpm
+
+# rpm -ivh samba-client-3.0.0-15.i386.rpm
+
+# rpm -ivh samba-3.0.0-15.i386.rpm
+
+ 
+
+此外还有一个工具就是图形界面的Swat。
+
+要是用这个工具﹐大家还要修改一处﹐就是﹕
+
+vi /etc/xinetd.d/swat把其中的
+
+disable = yes
+
+改为
+
+disable = no就可以了。
+
+ 
+
+# rpm -ivh samba-swat-3.0.0-15.i386.rpm
+
+ 
+
+(二) share级别的samba的配置
+
+这个级别的samba很简单，首先它不需要以用户和密码来验证登陆，所以就不必去配置samba用户了
+
+下面是实例：
+
+＃service smb start        // 启动samba
+
+＃cp /etc/samba/smb.conf /etc/samba/smb.conf.bak     // 备份samba的配置文件
+
+＃vi /etc/samba/smb.conf
+
+// 找到 security = user 将它改成 security = share
+
+＃service smb restart             // 重启samba服务器
+
+打开“我的电脑”，输入  \\192.168.1.88  sabma服务器的地址
+
+ 
+
+此时samba服务器上任没有设置任何共享目录。
+
+下面在服务器上设置一个名为test的共享目录
+
+＃mkdir /test
+
+＃chmod 777 /test //让所有用户具有完全权限
+
+＃vi /etc/samba/smb.conf
+
+找到 security = user 将它改成 security = share
+
+把光标移动配置文件的最后一行，在下面加入以下配置
+
+[test]    //共享名
+
+comment = test resource //共享目录的注释
+
+path = /test     //共享目录的路径
+
+writable = yes   //是否允许写入
+
+public = yes     //是否允许guest访问
+
+＃service smb restart             // 重启samba服务器
+
+这时输入   \\192.168.1.88
+
+可以看到刚才增加的名为test的共享目录，此目录任何人有“完全权限”
+
+如果需要共享其它目录，可照此设定。
+
+ 
+
+(三) user级别的samba的配置.
+
+Share级别的samba无需samba用户就可以访问服务器，而user级别的samba则需以samba用户和密码才能访问，所以我们先要设定一个samba用户,如下：
+
+＃useradd cc   //添加cc用户
+
+＃passwd cc   //设置cc用户的口令
+
+＃smbpasswd –a cc  //将cc用户添加为samba用户
+
+＃mkdir /cc   //建立/cc 目录，此目录就是要共享的目录
+
+＃chown cc.cc /cc   //让cc用户成为/cc目录的属主
+
+＃vi /etc/samba/smb.conf
+
+// 找到 security = share 将它改成 security = user
+
+把光标移动配置文件的最后一行，在下面加入以下配置
+
+[bb]  //共享名，特意取名为bb，以区别于cc的home共享
+
+comment = cc resource
+
+path = /cc
+
+writable = yes
+
+valid users = cc
+
+public = no
+
+＃service smb restart             // 重启samba服务器
+
+这时输入   \\192.168.1.88，会弹出用户验证对话框
+
+提示输入samba用户和密码,输入用户名:cc 和密码,进入这时会看到多了“bb”、“cc”这二个共享，其中bb是刚才添加的samba共享，“cc”是cc用户的家目录共享。
+
+[注] 在windows中添加cc用户，然后注销administrator，以cc用户的身份登录，访问samba服务器时，则不会出现用户登录对话框，不用输入用户名和密码而能直接浏览共享资源。下图是在windows中以用户cc登录后，输入 \\192.168.1.88 直接进入的画面。在windows中以administrator身份登录后访问samba资源，之所以会出现登录对话框，是因为administrator没有对应的samba帐户。
+
+ 
+
+如果不想使用“cc”用户的家目录共享，可以进行如下设置：
+
+＃vi /etc/samba/smb.conf
+
+找到如下语句：
+
+[homes]
+
+comment = Home Directories
+
+browseable = no
+
+writable = yes
+
+在每行的前面加上注释符号“；”
+
+;[homes]
+
+;   comment = Home Directories
+
+;   browseable = no
+
+;   writable = yes
+
+＃service smb restart             // 重启samba服务器
+
+这时输入 \\192.168.1.88
+
+此时只剩下我们人为添加的bb共享，而家目录共享cc已经不存在了
+
+[注] samba共享的访问权限受samba和linux操作系统的双重制约。即使在samba中已经开通了某个用户对于某个目录的访问权限，但如果samba用户所对应的linux用户没有该目录的访问权限，此时仍然不能访问该共享目录
+
+ 
+
+(四) 修改samba配置文件：（ /etc/smb.conf ）
+
+***************Global parameters******************
+
+#全局配置参数
+
+[global]
+
+#设置工作组或者说是域名。
+
+workgroup = MYGROUP
+
+#网络上看到的计算器名称(samba)。
+
+netbios name = SAMBA
+
+#服务器描述，%v显示Samba版本。
+
+server string = Samba Server %v
+
+#设置samba服务器使用的认证过程。默认为USER，有四个选项：User,Share，Server和Domain。
+
+Security = User
+
+#设置纯文本密码的最少字符数。
+
+min passwd length = 6
+
+#匿名、名称、密码都不正确不准登录服务器。即任何非法用户名登录均被视为gues用户。
+
+map to guest = Bad User
+
+#用户名的映像。
+
+username map = /etc/samba/smbusers
+
+#存放samba密码的路径
+
+smb passed file = /etc/samba/smbpasswd
+
+#samba日志文件的名字和路径。
+
+log file = /var/log/samba/%m.log
+
+#日志文件的最大尺寸（KB）
+
+max log size = 50
+
+#作为时间服务器。
+
+time server = Yes
+
+#设置连接被视为无效而断开前，未激活状态的时间（MIN)，防止资源被无效连接耗费。
+
+deadtime = 5
+
+#网络协议选项，注意不要更改，否则影响网络速度及网络问题。
+
+socket options = TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192
+
+#用户成功登录时在netlogon共享中运行的批处理文件或者windows命令文件，注意：这一项很重要，还有就是一定要配合下面的[netlogon]共享才能配置出你的PDC﹐%U为自动匹配登录用户的名称。
+
+logon script = %U.bat
+
+#在服务器上保存Windows用户登录时的配置文件路径，%L为Samba匹配服务器名称。
+
+logon path = \%Lprofile\%U
+
+#设定登录时主目录的当地路径。
+
+logon drive = H:
+
+#Samba接受所在组用户以域登录。
+
+domain logons = Yes
+
+#如果要把samba设置为域服务器，浏览器的OS级别一定要高于Windows。这里说名一下：OS级别：windows95为1，98为16，2000为32。
+
+os level = 65
+
+#设置samba试图成为主浏览器。
+
+domain master = Yes
+
+#设置samba为WINS服务器。
+
+wins support = Yes
+
+#超级用户。
+
+admin users = root
+
+#设置新文件权限。
+
+create mask = 0740
+
+#建立新文件时强制权限限制。
+
+force create mode = 0740
+
+#允许用户在NT2000下改变权限。
+
+security mask = 0740
+
+force security mode = 0740
+
+#创建新目录时允许拥有的最大权限。
+
+directory mask = 0750
+
+force directory mode = 0750
+
+directory security mask = 0750
+
+force directory security mode = 0750
+
+#Windows工作方式，只要文件被修改，其时间戳将随时更新。
+
+dos filetimes = Yes
+
+#Samba对文件生成时间作取整处理，计为下1秒，这也是windows工作方式。
+
+dos filetime resolution = Yes
+
+#共享家目录。
+
+[homes]
+
+comment = Home Directories
+
+read only = No
+
+browseable = No
+
+#重要的设置，samba作为域服务器时存放用户登录时执行的文件或脚本。
+
+[netlogon]
+
+comment = Network Logon Service
+
+path = /home/netlogon
+
+write list = root
+
+guest ok = Yes
+
+share modes = No
+
+#用户配置文件存放目录 。
+
+[Profile]
+
+path = /home/profiles
+
+read only = No
+
+create mask = 0770
+
+force create mode = 0770
+
+security mask = 0770
+
+force security mode = 0770
+
+directory mask = 0770
+
+force directory mode = 0770
+
+directory security mask = 0770
+
+force directory security mode = 0770
+
+browseable = No
+
+#打印机共享目录。
+
+[printers]
+
+comment = All Printers
+
+path = /var/spool/samba
+
+printable = Yes
+
+browseable = No
+
+***************************************************************************
+
+注意：
+
+1、Smb.conf其它参数用缺省即可。由于Linux的权限管理没有NT全面，在权限分配较复杂情况下，可以通过两种方式：
+
+A、对一个目录产生多个共享目录，每个目录对相应的用户组分配不同权限。
+
+B、可以和Linux上文件权限相结合。比如：samba共享目录可以给每个人写权限，但Linux上文件权限为只给特定组写权限，则其它人只能读。
+
+2、用户及密码管理：
+
+A、如果encrypt passwords = yes，用户会有两个密码(Linux，smbpasswd)，用户改密码会麻烦，所以我设置为no，samba会用/etc/passwd做用户验证，用户也只维护一个密码，比较方便，但不足够安全，好象unix password sync = Yes可以既方便又安全，但我没成功。
+
+B、修改/etc/passwd，使用户的shell为/usr/bin/passwd，这样用户想改密码时，telnet到samba服务器即可，其它如sendmail服务器也可以用这种方法。
+
+C、如不想用户的目录出现/GNUstep目录，运行mv /etc/skel /etc/skel.backup即可。
+
+3、windows98客户端：改注册表。
+
+在HKEY_LOCAL_MACHINESystemCurrentControlSetServicesVxDVNETSUP中增加一DWORD值：值名：EnablePlainTextPassword 数值：0x01。改windowshosts文件，ipaddree samba server name
+
+4、过网关：如客户端和samba server之间有路由器，确保客户端和samba server在同一workgroup， 客户端编辑windowslmhosts文件，a.b.c.d samba server的netbios名或主机名。
+
+我现在的做法为：给分公司IT设一个帐号在总部，让他们通过CUTEFTP再通过public目录实现总部和分公司的文件传输。这样可以避免分公司一定要跟总公司在一个域（他们还有NT）。
+
+5、磁盘限额：
+
+例如一百名，设定和 bob 相同的 quota 值，首先以手动编辑 bob 的 quota 信息，然后执行：
+
+# csh
+
+# edquota -p bob ‘awk -F:’$3 > 499 {print $1}‘/etc/passwd’
+
+这是假设你的使用者 UID 从 500 开始
+
+**********************************************************************************
+
+接下来就要手动在/home下建立目录：profiles,访问权限为0770,组为你想要建立的组﹐比如share用来存放Windows用户的配置文件。
+
+netlogon访问权限为1750，这里加上了sticky选项，不允许其它用户删除目录里的文件，只有超级用户或者建立者才可以，注意sticky选项只对目录起作用。组为share
+
+下面建立/etc/samba下面的smbpasswd文件：
+
+# cat /etc/passwd | mksmbpasswd.sh > /etc/samba/smbpasswd
+
+为了安全起见﹐设置权限：
+
+# cd /etc
+
+# chmod 500 samba
+
+# cd samba
+
+# chmod 600 smbapsswd
+
+接下来大家可以在netlogon目录里建立windows用户的登录脚本，比如批处理文件，需要注意的是，一定要在Windows下面建立，因为如果在Linux下建立，那幺Windows就不会执行Linux的文件。比如有个帐户feixue，批处理文件可以这样：
+
+feixue.bat内容为：
+
+@net time SambaServer /set /yes
+
+@net use H: SambaServerfeixue -y
+
+@regedit -s SambaServer
+
+etlogon*.reg
+
+等。
+
+需要注意的是把批处理文件保存到netlogon下面后一定要检查文件的权限，修正后用户才会执行，不然的话嘿嘿，你有麻烦了﹗﹗﹗
+
+如何配置Windows端登录Samba域，对于98来说很容易，在网络属性里选Client for microsoft networks，在第一项打勾，下面输入你的Samba服务器的域名(工作组)。重新激活机器以后，邓入对话框就会有三项：用户名、密码、域名。
+
+NT/2000下面登录samba域会困难一点，首先你要在Samba服务器上建立windowsNT/2000机器的信用帐号。
+
+ 
+
+ 
+
+(五) 修改samba配置文件2：（ /etc/smb.conf ）
+
+/usr/sbin/smbd
+
+处理来自用户的连接；文件、权限、用户名的管理
+
+/usr/sbin/nmbd
+
+帮助快速定位服务器，主要是主机名的定位
+
+/usr/sbin/swat
+
+Samba的Web维护工具，可以通过Web来维护Samba
+
+/etc/rc.d/init.d/smb
+
+启动或停止samba服务的脚本程序
+
+/etc/smb.conf
+
+Samba的主要配置文件
+
+/etc/smbusers
+
+samba客户的用户名到Linux用户名的映射文件
+
+/usr/bin/smbstatus
+
+报告当前Samba的连接状态
+
+/usr/bin/mksmbpasswd.sh
+
+从/etc/passwd文件形成smbpasswd文件的程序
+
+/usr/bin/smbadduser
+
+增加新的samba用户的程序
+
+/usr/bin/smbclient
+
+访问smb服务器资源的客户程序
+
+smbclient //Eloo-Server1/share
+
+smbclient //Eloo-Server1/share -I 192.168.0.22
+
+smbclient -M Eloo-Server1
+
+smbclient -L
+
+smbmount //smbserver/service /mnt/smb
+
+/usr/bin/smbpasswd
+
+改变一个用户的smb加密口令
+
+/usr/bin/testparm
+
+检查smb.conf配置文件语法是否正确的程序
+
+smb.conf是由段组成，每个段中又包含参数，参数的赋值方法
+
+参数＝参数值
+
+; #开头的都是注释行
+
+宏:log file=/var/log/samba/log.%m
+
+[global]
+
+workgroup=Eloo.com  指该服务器所在的工作组
+
+server string= Samba Server 描述信息
+
+log file=/var/log/samba/log.%m  指定日志文件的存放地点 m代表客户机的netbios名
+
+security = user 指定Samba操作的安全方式
+
+[homes]
+
+comment = Home directories  注释信息
+
+browseable = yes 共享名称可以出现
+
+writeable = yes  共享目录可以让客户写
+
+CREATE MODE=0755  按照unix文件的属性来创建文件
+
+[printers]
+
+path = /var/spool/samba  设置一个可以写的目录，作缓冲池
+
+guest ok = yes 允许任何人访问
+
+printable = yes 可以打印
+
+global中常用的参数
+
+security 确定对客户用户名/口令的验证方式
+
+-user 进行访问之前要输入有效的用户名及口令
+
+-share 不需要有效的用户名及口令即可访问
+
+-server 本质与'user'模式一样，但由其它samba服务器来验证
+
+-domain  指定该samba服务器是一个域控制器
+
+encrypt passwords = yes/no
+
+是否使用Win系统下的加密口令，如果选yes的话，就接收传过来的加密的口令，
+
+如果选no的话，就要接收未加密的口令，但现在的win系统一般都加密，所以要修改注册表，
+
+使之不加密
+
+regedit
+
+/HKEY_LOCAL_MACHINE/System/CurrentControlSet/Services/VxD/VNETSUP
+
+编辑－＝－新建==Dword值
+
+重命名"新值#1"为"EnablePlainTextPassword"
+
+赋值该新键值为1
+
+smb passwd file =/etc/smbpasswd
+
+设置samba服务器的用户密码存放地
+
+username map
+
+把samba客户的用户名映射为linux用户名的文件
+
+ex:root = admin administrator
+
+host allow = 192.68.0. Except 192.68.0.11
+
+允许192.68.0这个子网段内除192.68.0.11这台机器外的的所有机器访问
+
+log file =/var/log/samba/log.%m
+
+如果host1,host2这两台机器访问过服务器，就会在/var/log/samba/目录下生成log.host1,log.host2这两个日志文件
+
+Smb.conf的其它参数说明
+
+path   共享目录的路径(一定要存在)
+
+browseable 共享段是否在控制列表中列出
+
+exec 或 proexec 在建立连接之前有SMB服务器选运行的命令
+
+root preexec 只有root才能执行的命令,常用于挂接文件系统
+
+ex:
+
+[cdrom]
+
+comment = cdrom
+
+path = /mnt/cdrom
+
+read only = yes
+
+root preexec = mount /mnt/cdrom
+
+root postexec = umount /mnt/cdrom
+
+public 是否公开，如果设置为yes的话，访问此共享目录不需要口令
+
+create mode = 0755 创建文件后文件的权限位
+
+read only 如果设置为yes ,则不允许用户在此目录中进行写文件操作
+
+实验一：把自己本机设置为一台Samba服务器，使/home/user/test目录共享，使用另外一台Windows机器来测试是否能找到此机器并能访问共享目录(注意：此实验中samba的安全级别设置为share级，即所有人都可以访问 security = share)
+
+实验二：内容同上，但要把服务器的安全级别设置为user级别，即security=user,然后再测试。
+
+Share级别
+
+vi /etc/smb.conf
+
+[global]段中
+
+改security = share
+
+后，加一个共享段
+
+[share]
+
+path=/home/user/share
+
+public=yes
+
+browseable=yes
+
+netconf        设置主机名
+
+hostname 设置主机名
+
+重启即可
+
+实验内容:设置/home/user/share目录共享，使win9x客户端访问
+
+User级别(vi /etc/smb.conf)
+
+[global]段中
+
+改security=user
+
+取消 encrypt passwords = yes
+
+smb passwd file = /etc/smbpasswd
+
+的注释
+
+ 
+
+cat /etc/passwd|mksmbpasswd.sh &gt;/etc/smbpasswd
+
+使系统帐号导入至Samba帐号库中
+
+ 
+
+smbpasswd &lt;username&gt;
+
+为一个Samba帐号设置密码
+
+重启服务
+
+实验内容:设置win98客户端通过正常的用户名和口令可以访问自己的主目录 下面以一个计算器名为test的计算机为例：
+
+# useradd -c 'Test Compter' -d /dev/null -g share -s /bin/false -r test$
+
+我们创建了一个Linux本地帐号，出于安全的考虑不需要它登录到Linux进行任何操作，因此的用户目录为/dev/null，shell是/bin/false。
+
+然后我们就可以用smbpasswd创建相应的Samba机器帐号：
+
+# smbpasswd -a -m test
+
+其中-a是添加，-m是机器信任帐号。这样，依据test$的Linux帐号创建了一个NT域的机器信任帐号test。
+
+然后在windowsNT/2000上加入Samba域，根据提示输入超级用户的用户名称和密码，就可以加入Samba域了。
+
+重新激活机器以后，就会有三个选项了，比如用原先建立的用户feixue登入即可。
+
+然后开启浏览器输入http://hostname:901/
+
+也可以安装redhat-config-samba这个工具。
+
+为了方便远程管理，Webmin也不错（建议安装）
+
+ 
+
+ 
+
+ 
+
+(六) linux服务器向windows客户端提供文件/目录及打印机共享
+
+linux服务器上的samba运行起来以后，linux就相当于一台文件及打印服务器，向windows和linux samba客户提供文件及打印服务。工作在共享模式或者用户模式下的两种方法较为常见(Security=share或Security=user)，其中有以下常见问题。
+
+环境：Redhat linux 6.x
+
+1.　共享模式时从windows 98客户端不能从网上邻居中看到服务器，或者看到后不能点击进入共享资源，说密码不对等等。
+
+a.　没有去掉guest account = pcguest一行前面的注释符号
+
+b.　没有创建guest帐号pcguest (#useradd pcguest即可)
+
+c.　windows 98默认发送加密的口令，而/etc/smb.conf中没有enable samba加密口令。或者也可以编辑windows 98注册表，让它发送文本口令（不被建议的）
+
+2.　在/etc/smb.conf中定义了完全可写共享目录，但实际操作时不能写入。
+
+a.　特别要注意的是：linux本身的文件及目录权限永远大于samba定义的权限，要让某共享资源目录可以被写，首先要保证在linux下面该目录可以被相应的用户可写，这是前提。
+
+3.　在共享模式下如何对某共享目录加用户名及密码保护
+
+a.　看下面的共享资源定义例子：
+
+security = SHARE
+
+username map = /etc/smbusers
+
+log file = /var/log/samba/log.%m
+
+max log size = 50
+
+socket options = TCP_NODELAY
+
+client code page = 936
+
+os level = 40
+
+local master = yes
+
+preferred master = yes
+
+domain master = yes
+
+guest account = pcguest
+
+encrypt passwords = yes
+
+smb passwd file = /etc/smbpasswd
+
+[sales]
+
+comment = test folder
+
+path = /sales/training
+
+guest ok = no
+
+writable = yes
+
+valid users = @sales
+
+write list = @sales 在上面的例子中，我们定义了security=share和samba encrypt password，共享目录名sales不是guest用户可访问的，需要属于sales组里的用户可访问，同时也可写，当然在linux下面要保证/sales/training目录可被组sales可写，这样以后定义你的windows logon(不是NT域登录)的用户名为组sales里的用户名，然后在网上邻居中双击sales时会提示你密码，该密码是你在samba服务器上定义的samba加密的口令，在上面的例子中用户名和密码对存放在文件/etc/smbpasswd中，当然你事先要有系统用户名在/etc/passwd中。
+
+4.　windows用户经常不能在网上邻居中浏览到samba服务器的名字。
+
+a.　windows的网上邻居服务是非常不可靠的服务，它所建立的浏览列表不可靠，由众多因素引起。
+
+b.　一种可靠的解决办法是直接用"查找"-"计算机"-打入samba服务器的主机名进行查找。注意要确保你在windows启动时没有取消登录。
+
+c.　你也可以在DOS窗口用net use命令：如
+
+c:>net use m: sambaservernameshareresourcename
+
+5.　服务器端的测试配置工具
+
+a.　在配置完/etc/smb.conf后运行testparm检测配置文件中是否有相应语法错误
+
+b.　在samba服务起来后，用smbstatus报告用户使用和登录情况。
+
+c.　在更改过配置文件后，运行/etc/rc.d/init.d/smb restart重读配置文件
+
+(七) 在linux客户机上使用linux samba服务器
+
+1.　在linux客户机上使用smbclient
+
+a.　列出计算机192.168.100.1上所有可用的共享资源：
+
+smbclient -L 192.168.100.1
+
+如果询问口令，则直接回车。
+
+也可用名字如：
+
+smbclient -L sh3
+
+若不知道sh3的IP地址，也可用
+
+smbclient -L sh3 -I 192.168.100.1
+
+b.　以某用户身份连接到samba服务器192.168.100.1上的共享资源sales
+
+smbclient //192.168.100.1/sales -U jephe
+
+提示口令后输入口令，也可把口令打在命令行上用%号分隔，为：
+
+smbclient //192.168.100.1/sales -U jephe%password
+
+提示符为smb:，就象是FTP一样
+
+也可用名字如：
+
+smbclient //sh3/sales -I 192.168.100.1 -U jephe
+
+你也可以用符号，你的SHELL可能会过滤到特殊符号，则要这样写
+
+#smbclient \sh3sales
+
+2.　通过IP地址查找netbios名字
+
+a.　在windows下用
+
+c:>nbtstat -A 192.168.100.1
+
+如果知道netbios名字，可用下面的命令得知某机器哪些服务
+
+c:>nbtstat -a hydra
+
+b.　在linux下用
+
+#nmblookup -A 192.168.100.1
+
+在一个网段内可用下面的命令检测哪些主机在提供samba共享服务：
+
+#nmblookup -d 2 * 或
+
+#nmblookup -B 192.168.100.255 *
+
+检测其它网段内的某台机器是否提供samba服务
+
+#nmblookup -A 192.168.15.48
+
+但不能用 #nmblookup -B 192.168.15.255 *，因为一般的路由器和linux双宿主机不
+
+转发子网直接广播。
+
+3.　netbios over TCP/IP使用的协议及端口号
+
+a.　共有三种netbios服务
+
+netbios-ns 137/udp(大多数） and 137/tcp
+
+netbios-dgm 138/udp(大多数）
+
+and 138/udp(<font color=red>明显有误，到底哪个是udp/tcp</font>)
+
+netbios-ssn 139/tcp
+
+b.　windows机器上的PC应用程序通过不同机器间的netbios名字来彼此通讯。
+
+c.　每次当windows机器启动时，它向整个网段内发出137/udp广播，一来登记向某工作组内的主浏览器登记netbios名字，二来确信整个子网内没有与之相同的名字
+
+d.　网上邻居中所建立起来的浏览列表仅仅是列表，看不到也没有关系，同样也可以通过计算机查找，net use命令等来与别的计算机通讯，共享文件和打印机
+
+e.　不在同一网段内的机器或者是拨号到LAN上的PPP服务器后不可能进行网上邻居的浏览。这是因为子网内的广播不被串行线路和路由器转发。
+
+f.　如何在拨号到LAN上的PPP服务器后使用LAN上的samba服务器
+
+<1> 在windows目录下编辑c:windowslmhosts
+
+如：192.168.11.3 sh3 #PRE #DOM:sales
+
+执行nbtstat -R 去enable它，不需要重启windows
+
+<2> 你必须登录windows，若是用户模式的samba，你应该选择windows NT登录
+
+<3> 其它设置跟LAN上的机器一样
+
+<4> 拨号建立连接后，在查找"计算机"功能定位资源
+
+<5> 现在你能使用远端服务器上的目录和打印机。
+
+在不同网段内的机器也可参照此做法，也可用plug-gw代理tcp/139号端口访问另一网段上的samba服务器。
+
+ 
+
+Samba config file created using SWAT
+
+# from 0.0.0.0 (0.0.0.0)
+
+# Date: 2003/11/19 15:38:38

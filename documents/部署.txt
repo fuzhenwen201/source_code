@@ -1,0 +1,20 @@
+1、进入 http://10.10.10.18:8081网页 (用户名/密码:jenkins/jenkins）
+
+2、选择amqp-lib工程进入，点击立即构建（此时所有模块工程都将自动构建完成并将生成的二进制文件上传到gitlab仓库）
+
+3、进入35.154.147.154服务器/home/Kevin目录 执行updatajava.sh脚本
+
+4、进入35.154.44.66的sql数据库执行Kanhaiya提供的数据库更新脚本
+
+5、进入35.154.44.66服务器/home/Kevin/TradingPlatform目录执行stop.sh脚本
+
+6、进入/home/Kevin/TradingPlatform目录执行run.sh脚本
+
+
+
+命令：
+docker-compose ps   （列出所有容器及状态 up为启动成功）
+docker-compose up -d sgd (启动sgd服务)
+docker-compose exec sgd bash （进入sgd服务镜像）
+docker-compose kill sgd  （杀掉sgd服务）
+docker-compose rm sgd  (删除sgd容器)
