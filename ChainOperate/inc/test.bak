@@ -1,0 +1,288 @@
+﻿/*******************************************************************************************
+
+*Department:	Exchange team
+
+*Decrible:  	Chain Operator lib 
+				
+*Auhor:			Savin, Tony
+
+*Createdtime:	2018-02-28
+
+*ModifyTime:	
+
+
+********************************************************************************************/
+
+#ifndef NEWEXCHANGE_CHAINOPERATOR_HEAD
+#define NEWEXCHANGE_CHAINOPERATOR_HEAD
+
+#include <string.h>
+#include <list>
+#include <stdio.h>
+
+#include "xlogger.h"
+
+
+using namespace std;
+using namespace snetwork_xservice_xflagger;
+
+//地址长度
+#define ADDRESSLEN 128
+
+//私钥长度
+#define PRIVATEKEYLEN 128
+
+//区块链名字的长度
+#define CHAINNAMELEN 128
+
+//货币长度
+#define SYMBOLLEN 64
+
+//TXID长度
+#define	TXIDLEN	256
+
+
+//区块链类型
+#define BTCCHAINTYPE 1
+#define ETHCHAINTYPE 2
+
+
+
+// 入金检测 用的 数据
+typedef struct __STDepositAddr
+{
+	long  	nId;					
+	long 	nUserId;
+	
+	//2018-03-07 modify by savin
+	//long 	nCoinId;
+	int		nChainType;						//区块链类型
+	char 	sSymbol[SYMBOLLEN];				//由区块链库填写,传出来
+	
+	long 	nScanStartBlock;				//扫描的其实块,传入, 同时也要传出, 然后更新到Blockchian_info表中
+	int		nConfirmBlkQty;
+	//char	sChainName[CHAINNAMELEN]; 		//2018-03-07 modify by savin
+	char 	sDestAddr[ADDRESSLEN];
+	char 	sSrcAddr[ADDRESSLEN];			//入金源地址,链库回填
+	char	sTxID[TXIDLEN];					//入金交易id,链库回填
+	double	fAmount;						//入金数目,链库回填 
+	
+	
+	__STDepositAddr &  operator=(__STDepositAddr &thr)
+	{
+		nId = thr.nId;
+		nUserId = thr.nUserId;
+		//nCoinId = thr.nCoinId;
+		nScanStartBlock = thr.nScanStartBlock;
+		nConfirmBlkQty = thr.nConfirmBlkQty ;
+		
+		strncpy(sSymbol, thr.sSymbol,SYMBOLLEN-1);
+		strncpy(sSrcAddr, thr.sSrcAddr,ADDRESSLEN-1);
+		strncpy(sDestAddr, thr.sDestAddr,ADDRESSLEN-1);
+		strncpy(sTxID, thr.sTxID,TXIDLEN-1);
+		
+		return *this;
+	}
+	
+	void Print()
+	{
+		XINFO("nId:%ld,nUserId:%ld,nChainType:%d,nScanStartBlock:%ld,nConfirmBlkQty:%ld\
+		sSymbol:%s, sSrcAddr:%s,sDestAddr:%s, sTxID:%s,,fAmount:%f \n",
+		nId, nUserId,nChainType,nScanStartBlock,nConfirmBlkQty,fAmount,
+		sSymbol,sSrcAddr,sDestAddr,sTxID 
+		);
+	}
+	
+}STDepositAddr; 
+
+
+
+// 转账的交易数据
+typedef struct __STTradeData
+{
+	long  	nId;
+	long 	nUserId;
+	double 	fAmount;
+	
+	//2018-03-07 modify by savin
+	//char	sChainName[CHAINNAMELEN];
+	int		nChainType;
+	int 	nDirect;
+	
+	
+	char 	sSrcAddr[ADDRESSLEN];
+	char 	sDestAddr[ADDRESSLEN];
+	char 	sPriKey[PRIVATEKEYLEN];
+	
+	char	sTxID[TXIDLEN];
+	int		isSucess;					//1 sucess, 
+	
+	__STTradeData &  operator=(__STTradeData &thr)
+	{
+		nId = thr.nId;
+		nUserId = thr.nUserId;
+		fAmount = thr.fAmount;
+		//strncpy(sChainName, thr.sChainName,CHAINNAMELEN-1);
+		nChainType = thr.nChainType;
+		nDirect = thr.nDirect ;
+		strncpy(sSrcAddr, thr.sSrcAddr,ADDRESSLEN-1);
+		strncpy(sDestAddr,thr.sDestAddr,ADDRESSLEN-1);
+		strncpy(sPriKey, thr.sPriKey,PRIVATEKEYLEN-1);
+		strncpy(sTxID, thr.sTxID,TXIDLEN-1);
+		isSucess = thr.isSucess ;
+		
+		return *this;
+	}
+	
+	void Print()
+	{
+		XINFO("nId:%ld,nUserId:%ld,fAmount:%f,\
+		nChainType:%d,nDirect:%d,sSrcAddr:%s,sDestAddr:%s,sPriKey:%s ,sTxID:%s, isSucess:%d\n",
+		nId, nUserId,fAmount, 
+		nChainType, nDirect, sSrcAddr ,sDestAddr ,sPriKey ,sTxID,isSucess
+		);
+	}
+	
+}STTradeData; 
+
+
+
+
+// 区块确认的数据
+typedef struct __STConfirmData
+{
+	long  	nId;
+	long	nUserId ;
+	long	nCoinId ;
+	double 	fAmount ;
+	
+	/*
+	0x9001: PoolAddr  	UserWallet 
+	0x9002: UserWallet  	ExchangeAddr
+	0x9003: ExchangeAddr  PoolAddr
+	*/
+	int		nType;						
+	
+	//2018-03-07 modify by savin
+	int 	nChainType;			//1:BTC CHAIN, 2:ETH CHAIN
+	
+	long	nChainConfirmBlkQty;		//本区块链的确认数
+	long	nConfirmBlkQty;				//当前确认数
+	char	sTxId[TXIDLEN];
+	
+	// new add on 2018/03/05
+	char 	sSrcAddr[ADDRESSLEN];
+	char 	sDestAddr[ADDRESSLEN];
+	 
+	
+	__STConfirmData &  operator=(__STConfirmData &thr)
+	{
+		nId = thr.nId;
+		nUserId = thr.nUserId;
+		nCoinId = thr.nCoinId;
+		fAmount = thr.fAmount;
+		nType = thr.nType;
+		nChainType = thr.nChainType ;
+		nChainConfirmBlkQty = thr.nChainConfirmBlkQty;
+		nConfirmBlkQty = thr.nConfirmBlkQty;
+		strncpy(sTxId, thr.sTxId,TXIDLEN-1);
+		
+		strncpy(sSrcAddr, thr.sSrcAddr,ADDRESSLEN-1);
+		strncpy(sDestAddr, thr.sDestAddr,ADDRESSLEN-1);
+		
+		return *this;
+	}
+	
+	void Print()
+	{
+		XINFO("nId:%ld,nUserId:%ld,nCoinId:%ld ,fAmount:%f,type:%d,ChainType:%d\
+		nChainConfirmBlkQty:%ld,nConfirmBlkQty:%ld,sTxID:%s,sSrcAddr:%s,sDestAddr:%s\n",
+		nId, nUserId,nCoinId ,fAmount,nType,nChainType,
+		nChainConfirmBlkQty,nConfirmBlkQty,sTxId,
+		sSrcAddr,sDestAddr
+		);
+	}
+	
+}STConfirmData; 
+
+
+
+
+
+// 创建用户exchange地址
+typedef struct __STExchangeAddrInfo
+{
+	long 	nUserId;
+	
+	//2018-03-07 modify by savin
+	//long	nCoinId;  //	
+	//char	sChainName[CHAINNAMELEN];
+	long 	nBlockChainID;
+	int 	nChainType;			//1:BTC CHAIN, 2:ETH CHAIN
+	//end
+	
+	char	sUserExchangeAddr[ADDRESSLEN];	//  创建成功时的区块链地址
+	char 	sPriKey[PRIVATEKEYLEN];
+	int		nType;							//0, 创建成功,其他失败
+	
+	__STExchangeAddrInfo &  operator=(__STExchangeAddrInfo &thr)
+	{
+		nUserId = thr.nUserId;
+		//nCoinId = thr.nCoinId;
+		nType = thr.nType;
+		nBlockChainID = thr.nBlockChainID;
+		nChainType = thr.nChainType;
+		
+		//strncpy(sChainName, thr.sChainName,CHAINNAMELEN-1);
+		strncpy(sUserExchangeAddr, thr.sUserExchangeAddr,ADDRESSLEN-1);
+		strncpy(sPriKey, thr.sPriKey,PRIVATEKEYLEN-1);
+		
+		return *this;
+	}
+	
+	void Print()
+	{
+		XINFO("nId:%ld,nBlockChainID:%ld, nChainType:%d, nType:%d,\
+		sUserExchangeAddr:%s,sPriKey:%s", 
+		sUserExchangeAddr,sPriKey,
+		nUserId,nBlockChainID,nType);
+	}
+	
+}STExchangeAddrInfo;
+
+
+
+
+
+
+class CChainOperator
+{
+public:
+	int Init(list<string> *pChainList);
+	int Clean();
+	
+	// 入金检测
+	int CheckDeposit(list<STDepositAddr> *pDesportAddrList, list<STDepositAddr> *pDesportInfo_out);
+	
+	// 转币
+	int TransferCoin(list<STTradeData> *pTradeDataList);
+	
+	// 交易确认
+	int TradeConfirm(list<STConfirmData> *pConfirmDataList);
+	
+	// 创建地址 
+	int CreateAddr(list<STExchangeAddrInfo> *pExchangeAddrInfoList);
+	
+	
+	// ......
+	
+};
+
+
+
+
+#endif //
+
+
+
+
