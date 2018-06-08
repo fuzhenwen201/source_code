@@ -1,0 +1,189 @@
+
+syntax="proto3";
+package MEProInterface;
+
+message ST_USER_LOGIN_INFO
+{ 
+  bytes chUserName = 1;
+  bytes chPasswordTxt = 2;
+  string chAddressIp = 3;
+}
+
+message ST_SIG_IP_INFO
+{
+     uint32 wIpType = 1;    //IP类型，0表示IPV4 1表示IPV6
+     bytes ucIpAddress = 2; //IP地址,如果是IPV4的话,则只需要获取前四个字节
+}
+
+message ST_SYMBOL_INFO
+{
+     uint32 uiSymbolID =1;
+     bytes uiSymbolName = 2;
+}
+
+message ST_USER_LOGIN_RESP
+{
+     uint32 ucLoginRsp = 1;  //登陆结果， 0：表示鉴权通过，1表示用户或者密码错误//只有在鉴权通过的情况下，才会有IP信息和交易品种信息
+     uint32 uiUserID = 2; //对应的用户注册ID
+     uint32 uiIPLisyNum = 3;
+     repeated ST_SIG_IP_INFO stIPInfo = 4;//IP地址,如果是IPV4的话,则只需要获取前四个字节
+     uint32 uiSymbolNum = 5; //交易品种的个数
+     repeated ST_SYMBOL_INFO stSymbolInfo = 6; //交易品种ID
+     bytes chUserName = 7;
+}
+//委托订单
+message ST_SUBMIT_ORDER
+{
+     string strOrderID = 1;     //订单ID
+     uint64 lSubmitTime = 2;    //下单时间，单位为微妙
+     uint32 ucTransType = 3;    //交易类型，0 表示买， 1表示卖
+     uint32 ucOrderType = 4;    //订单类型，0 表示限价订单，1表示市场订单
+     uint32 uiUserID = 5;       //客户端用户在的注册ID，用于标识是哪个交易所的数据
+     uint32 uiExchObjID = 6;   //交易品种代码
+     int64 lPrice = 7;          //交易价格,在这里可选是因为如果市场单的话，交易价//格就不一定是必须出现的
+     int64 lNumber = 8;         //交易数量,在这里交易价格和交易数量，由于是订单上来的时候是float类型，在这里为了最后计算的方便，
+                                        //先乘以10000000，换算为long型，最后在除以这个数，得到原来的结果
+     uint32 uiOrderIndex = 9;     //接收端分配的索引号，为顺序增长，从0开始
+     uint64 ucRecordID = 10;     //表内部编号ID
+}
+//委托撤单
+message ST_SUBMIT_CAMCEL_ORDER
+{
+     string strOrderID = 1;   //交易所内部的订单编号
+     uint64 lOrderIDFrME = 2; //由ME返回给交易所的订单编号
+     uint32 uiOrderIndex = 3; //由ME返回给交易所的订单索引号
+     uint32 uiUserID = 4;     //客户端用户在的注册ID，用于标识是哪个交易所的数据
+     uint32 uiExchObjID = 5; //交易品种代码
+     uint32 ucTransType = 6;  //交易类型，0 表示买， 1表示卖
+     int64 lPrice = 7;        //交易价格,
+}
+
+//订单响应
+message ST_SUBMIT_ORDER_RESP
+{
+     string strOrderID = 1;       //交易所内部的订单编号
+     uint32 uiSubmitOrderIype = 2;//委托订单类型，0为挂单，1为撤单
+     uint64 lOrderIDFrME = 3;     //由ME返回给交易所的订单编号
+     uint32 uiOrderIndex = 4;     //由ME返回给交易所的订单索引号
+     uint32 uiOrderStatus = 5;    //订单状态0：接收, 1:拒绝,2:服务器维护
+     string strText = 6;          //提交订单失败的原因
+     uint32 uiUserID = 7;     //客户端的注册ID，用于标识是哪个交易所的数据
+     uint32 ucTransType = 8;  //交易类型，0 表示买， 1表示卖
+}
+
+//市场成交数据入数据库
+message ST_TRANS_ORDER_INFO
+{
+    string strBidOrderID = 1;  //买单编号
+    string strAskOrderID = 2;  //卖单编号
+    uint32 uiBidUserID = 3;    //买单所在的交易所的用户ID
+    uint32 uiAskUserID = 4;    //卖单所在的交易所的用户ID
+    int64 fPrice = 5;         //价格
+    int64 fNumber = 6;        //数量
+    uint32 ucExchType = 7;     //交易类型  0:撤单 1:成交
+    uint64 ucRecordID = 8;     //表内部编号ID
+    uint32 ucOrderStatus = 9;  //订单状态，1：部分执行 2：完全执行。该字段用于撤单的时候
+    uint32 uiExchObjID = 10;   //交易品种代码
+    uint64 meBidOrderID = 11;  //ME生成的买单编号
+    uint64 meAskOrderID =12;   //ME生成的卖单编号
+}
+
+//市场成交数据重传请求
+message ST_REP_TRANS_ORDER_REQUEST
+{
+     uint32 uiUserID = 1;    //交易所的用户ID
+     uint64 ucExchID = 2;    //由ME返回给交易所的订单编号
+     uint32 uiExchObjID = 3; //交易品种代码
+}
+
+//历史订单查询
+message ST_QUERY_ORDER_INFO
+{
+     uint32 uiUserID = 1;     //客户端的注册ID，用于标识是哪个交易所的数据
+     string strOrderID = 2;   //订单ID
+     uint64 lOrderIDFrME = 3; //由ME返回给交易所的订单编号
+     uint32 uiExchObjID = 4;  //交易品种代码
+}
+
+//历史订单查询结果响应
+message ST_QUERY_ORDER_RES
+{
+     uint32 uiUserID = 1;          //客户端的注册ID，用于标识是哪个交易所的数据
+     string strOrderID = 2;        //订单ID
+     uint32 uiExchObjID = 3;       //交易品种代码
+     uint32 wTransStatus = 4;      //0：挂单中， 1:全部成交 2：部分成交 3：全部撤单 4：部分撤单,5:未查询到此记录，如果是未查询到记录的话，则从编号5开始的所有部分都可以忽略
+     uint32 ucTransType = 5;       //交易类型0 表示买， 1表示卖
+     int64 lOrgPrice = 6;          //交原始订单的挂单价格,
+     int64 lOrgNumber = 7;         //原始订单的交易数量,
+     int64 lAvgTransferPrice = 8;  //已经成交部分的平均成交价
+     int64 lAvgTransferNum = 9;    //已经成交部分的成交数量
+                                           //注意的是编号8和9，在订单未有成交的情况下，可忽略
+     uint64 lOrderIDFrME = 10; //由ME返回给交易所的订单编号
+}
+
+message ST_MART_QUOTATION
+{
+   uint32 uiUserID = 1; //交易所的用户ID
+   uint32  uiExchObjID = 2;       //交易品种代码
+   int64   lCurDealProce = 3; //最新的成交价
+   int64   lTotalDealProce = 4; //周期内总的成交数量
+   int64   lBeginProce = 5;     //周期内的开盘价
+   int64   lHighestProce = 6;     //周期内的开盘价
+   int64   lMinimumProce = 7;     //周期内的开盘价
+}
+
+message ST_SIG_ORDER_INFO
+{
+   uint64 lPrice = 1;
+   uint64 lNumber = 2;
+}
+
+//订单簿
+message ST_MARKET_ORDERBOOK
+{
+   uint32 uiUserID = 1; //交易所的用户ID
+   uint32 uiExchObjID = 2;       //交易品种代码
+   uint32 uiBidOrderNum = 3;  //买单的数量
+   repeated ST_SIG_ORDER_INFO stBidOrder = 4;
+   uint32 uiAskOrderNum = 5;   //卖单数量
+   repeated ST_SIG_ORDER_INFO stAskOrder = 6;
+}
+
+message ST_MAINTAIN_LOG
+{
+  string strHostName = 1; //服务器主机名
+  uint32  chLogLevel = 2;  //日志级别 0:TRACE,1:DEBUG,  2:INFO,3:WARN,  4:ERROR,5:FATAL
+  uint32  chModuleIndex = 3; //模块序号1:OrderAPI 2:Report Sever 3:Matching Engine
+                           //4:Data Persistence Server 5:Data Retire Server 6:Subscription API
+  uint64 uiRepTime = 4;     //日志上班时间
+  string strLogContent = 5; //具体日志内容
+}
+
+message IntervalMsgHeader
+{
+    int32  iFlowNumber = 1;//流水号
+    int32  iCmd = 2;      //命令字，其中0代表鉴权，1代表委托订单
+                                      // 2:表示撤单请求，3：表示订单查询
+                                      //4发送市场成交信息 5：发送市场行情数据
+                                      //6发送订单簿数据  7：历史订单查询
+    int32  iMsgType =3; //其中0为请求，1为响应， 2为主动推送
+    oneof  MsgBody
+    {
+     ST_USER_LOGIN_INFO stUserLogin = 4;
+     ST_USER_LOGIN_RESP stLoginResp = 5;
+     ST_SUBMIT_ORDER    stSubmitOrder = 6;
+     ST_SUBMIT_CAMCEL_ORDER stCancelOrder = 7;
+     ST_SUBMIT_ORDER_RESP  stOrderResp = 8;
+     ST_QUERY_ORDER_INFO   stQueryOrder = 9;
+     ST_QUERY_ORDER_RES    stQueryResp = 10; 
+	 ST_TRANS_ORDER_INFO   stTransOrder = 11;
+	 ST_MART_QUOTATION     stMarketData = 12;
+	 ST_REP_TRANS_ORDER_REQUEST stReptransReq = 13;
+	 ST_USER_LOGIN_INFO stSubcriUserLogin = 14;
+	 ST_QUERY_ORDER_INFO stQueryHistoryOrder = 15;
+	 ST_MARKET_ORDERBOOK stMarketOrderBook = 16;
+	 ST_MAINTAIN_LOG stMaintainLog = 17;
+    }
+}
+
+

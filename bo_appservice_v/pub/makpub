@@ -1,0 +1,13 @@
+cd $APPHOME/pub/ipc/msg/
+make
+cd $APPHOME/pub/ipc/mem/
+make
+cd $APPHOME/pub/log/
+make
+make install
+cd $APPHOME/pub/tyinhttp/
+make
+cd $APPHOME/pub/common/
+make
+cd $APPHOME/pub/com/tcp
+make
