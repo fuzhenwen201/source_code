@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintechstar.admin.dao.group.IGroupDao">
+
+	<sql id="groupColumn">
+		IsEnable, GroupName, OTP, IsEnableForceOTP, OwnerName, 
+		SupportedPage, DefaultDeposit, DepositCurrency, DefaultLeverage, AnnualInterst,
+		CreatedTime, ModifiedTime, IsDeleted
+	</sql>
+	
+	<resultMap id="groupCommonResultMap" type="GroupCommon">	
+		<id property="annualInterest" column="AnnualInterst"/>
+	</resultMap>
+
+	<insert id="saveGroup" parameterType="GroupCommon" useGeneratedKeys="true" keyColumn="GroupID" keyProperty="groupId">
+		INSERT INTO group_common (<include refid="groupColumn" />)
+		VALUES
+		(
+			#{isEnable},
+			#{groupName, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			#{otp, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			#{isEnableForceOtp},
+			#{ownerName, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			#{supportedPage, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			#{defaultDeposit},
+			#{depositCurrency, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			#{defaultLeverage}, 
+			#{annualInterest},
+			#{createdTime, jdbcType=TIMESTAMP, javaType=java.util.Date, mode=IN},
+			#{modifiedTime, jdbcType=TIMESTAMP, javaType=java.util.Date, mode=IN},
+			#{isDeleted}
+		)
+	</insert>
+	
+	<update id="updateGroup" parameterType="GroupCommon" >
+		  UPDATE group_common SET	 
+		  	GroupID = #{groupId} , 
+		 	IsEnable= #{isEnable}, 
+		    GroupName= #{groupName, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}, 
+		  	OTP = #{otp, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}, 
+		  	IsEnableForceOTP=  #{isEnableForceOtp},
+		  	OwnerName =#{ownerName, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		  	supportedPage= #{supportedPage, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		  	DefaultDeposit= #{defaultDeposit}, 
+		  	DepositCurrency =#{depositCurrency, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		  	DefaultLeverage= #{defaultLeverage},
+		  	AnnualInterst= #{annualInterest},
+		  	ModifiedTime= #{modifiedTime, jdbcType=TIMESTAMP, javaType=java.util.Date, mode=IN}, 
+		  	IsDeleted = #{isDeleted} 
+		  WHERE GroupID = #{groupId}
+	</update>
+	
+	<select id="getGroupCommonByGroupId" parameterType="int" resultMap="groupCommonResultMap">
+		 SELECT groupId, <include refid="groupColumn" /> FROM group_common WHERE GroupID = #{groupId}
+	</select>
+
+	<select id="getGroups" resultType="GroupDetailsVo">
+		SELECT g.GroupID, g.IsEnable, g.GroupName, g.OwnerName, m.CallLevel, m.StopOutLevel 
+		FROM group_common g 
+		JOIN group_margin m on g.GroupID = m.GroupID 
+		WHERE g.IsDeleted =0;
+	</select>
+</mapper>

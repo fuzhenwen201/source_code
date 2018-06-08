@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.broctagon.trad.networkconfiguration.db.dao.GroupBoSymbolsDao">
+					
+	<select id="queryGroupBoSymbolsModels" resultType="GroupBoSymbolsModel" parameterType="java.util.ArrayList">
+		select * from group_bo;
+	</select>
+		
+	 <insert id="addGroupBoSymbolsModels" parameterType="list">
+		insert into group_bo 
+		(group_id,group_name,security_id,bo_caltype,time_period,maximum_amounts,
+		minimum_amounts,group_password,profit,operator_id,modify_time,describe)
+		values
+		<foreach item="groupBoSymbolsModel" index="index" collection="list" separator= ",">
+		(#{groupBoSymbolsModel.group_id},#{groupBoSymbolsModel.group_name},#{groupBoSymbolsModel.security_id},#{groupBoSymbolsModel.bo_caltype},	
+		#{groupBoSymbolsModel.time_period},#{groupBoSymbolsModel.maximum_amounts},#{groupBoSymbolsModel.minimum_amounts},#{groupBoSymbolsModel.group_password},
+		#{groupBoSymbolsModel.profit},#{groupBoSymbolsModel.operator_id},datetime('now', 'localtime'),#{groupBoSymbolsModel.describe})		
+		</foreach>;
+	</insert> 
+		
+	<insert id="addGroupBoSymbolsModel" parameterType="GroupBoSymbolsModel">
+		insert into group_bo 
+		(group_id,group_name,security_id,bo_caltype,time_period,maximum_amounts,
+		minimum_amounts,group_password,profit,operator_id,modify_time,describe) 
+		values 
+		(#{group_id},#{group_name}, #{security_id},#{bo_caltype},
+		#{time_period},#{maximum_amounts},#{minimum_amounts},#{group_password},
+		#{profit},#{operator_id},datetime('now', 'localtime'),#{describe})
+	</insert>
+		
+	<delete id="deleteAll">
+		delete from group_bo;
+	</delete>	 
+		
+</mapper>
+
+

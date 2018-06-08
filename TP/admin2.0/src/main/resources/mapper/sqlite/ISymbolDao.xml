@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintechstar.admin.synch.dao.ISymbolOfSqliteDao" >
+
+	<delete id="clearTable">
+        DELETE FROM symbol_spread;
+    </delete>
+    
+    <insert id="saveSymbols" parameterType="java.util.List">
+    	INSERT INTO symbol_spread
+    	(
+    		symbol, symbol_spread, operator_id, modify_time, describe
+    	)
+    	VALUES
+    	<foreach collection="list" item="item" separator=",">
+    	(
+    		#{item.symbol}, #{item.symbolSpread}, #{item.operatorId}, #{item.modifyTime}, #{item.describe}
+    	)
+    	</foreach>
+    </insert>
+	
+</mapper>

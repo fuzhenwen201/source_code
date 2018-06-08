@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintechstar.admin.dao.account.IAccountDao" >
+
+	<sql id="accountColumn">
+		GroupID, ClientID, Balance, PrevBalance, ChangedDeposit, 
+		Margin, FreeMargin, CloseBalance, DirtyBit, BOAccountID,
+		FXAccountID, modifiedTime
+	</sql>
+
+	<insert id="saveAccount" parameterType="Account" keyProperty="accountId" keyColumn="AccountID" useGeneratedKeys="true">
+		INSERT INTO account(<include refid="accountColumn" />)
+		VALUES(
+			#{groupId}, #{clientId}, #{balance}, #{prevBalance}, #{changeDeposit}, 
+			#{margin}, #{freeMargin}, #{closeBalance}, #{dirtyBit}, #{boAccount}, 
+			#{fxAccount}, #{modifiedTime}
+		)
+	</insert>
+	
+	
+	<update id="updateAccount" parameterType="Account">
+		UPDATE account SET
+			GroupID = #{groupId}, ClientID = #{clientId}, Balance = #{balance}, PrevBalance = #{prevBalance}, ChangedDeposit = #{changeDeposit}, 
+			Margin = #{margin}, FreeMargin = #{freeMargin}, CloseBalance = #{closeBalance}, DirtyBit = #{dirtyBit}, BOAccountID = #{boAccount}, 
+			FXAccountID = #{fxAccount}, modifiedTime = #{modifiedTime}
+		WHERE AccountID = #{accountId}
+	</update>
+
+</mapper>

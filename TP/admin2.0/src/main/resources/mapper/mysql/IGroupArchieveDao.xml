@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintechstar.admin.dao.group.IGroupArchieveDao">
+
+	<sql id="groupArchieveColumn">
+		GroupID, InActivePeriod, MaxBalance, PendingDeletedOrder, ModifiedTime
+	</sql>
+	
+	<insert id="saveGroupArchieve" parameterType="GroupArchieve">
+		INSERT INTO group_archieve( <include refid="groupArchieveColumn" /> )
+		VALUES(
+			#{groupId,jdbcType=NUMERIC, javaType=java.lang.Integer, mode=IN},
+			#{inActivePeriod,jdbcType=NUMERIC, javaType=java.lang.Integer, mode=IN},
+			#{maxBalance},
+			#{pendingDeletedOrder,jdbcType=NUMERIC, javaType=java.lang.Integer, mode=IN},
+			#{modifiedTime, jdbcType=TIMESTAMP, javaType=java.util.Date, mode=IN}
+		)
+	</insert>
+	
+	<update id="updateGroupArchieve" parameterType="GroupArchieve">
+		UPDATE group_archieve SET 
+			InActivePeriod =#{inActivePeriod,jdbcType=NUMERIC, javaType=java.lang.Integer, mode=IN},
+			MaxBalance=#{maxBalance}, 
+			PendingDeletedOrder=#{pendingDeletedOrder,jdbcType=NUMERIC, javaType=java.lang.Integer, mode=IN} ,
+			ModifiedTime=#{modifiedTime, jdbcType=TIMESTAMP, javaType=java.util.Date, mode=IN} 
+		WHERE GroupID = #{groupId}
+	</update>
+	
+	<select id="getGroupArchieveByGroupId" parameterType="int" resultType="GroupArchieve">
+		SELECT <include refid="groupArchieveColumn" /> FROM group_archieve WHERE GroupID = #{groupId}
+	</select>
+</mapper>

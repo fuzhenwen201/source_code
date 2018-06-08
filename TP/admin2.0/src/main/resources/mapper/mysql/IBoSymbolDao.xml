@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintechstar.admin.dao.symbol.IBoSymbolDao" >
+	
+	<sql id="boSymbolColumn">
+		SymbolID, BoCalType, ReturnRate
+	</sql>
+	
+	<insert id="saveBoSymbol" parameterType="BoSymbol" >
+		INSERT INTO bo_symbol (<include refid="boSymbolColumn" /> , ModifiedTime)
+        VALUES(
+        	#{symbolId, jdbcType=NUMERIC, javaType=java.lang.Integer, mode=IN},
+       	    #{boCalType, jdbcType=NUMERIC, javaType=java.lang.Integer, mode=IN},
+            #{returnRate},
+            now()
+        )
+	</insert>
+	
+	<update id="updateBoSymbol" parameterType="BoSymbol" >
+		UPDATE bo_symbol SET 
+			BoCalType = #{boCalType}, 
+		  	ReturnRate = #{returnRate},
+		  	ModifiedTime = now()
+		WHERE SymbolID = #{symbolId}
+	</update>
+
+	<select id="getBoSymbolBySymbolId" parameterType="int" resultType="BoSymbol">
+		SELECT <include refid="boSymbolColumn" /> FROM bo_symbol WHERE SymbolID = #{symbolId}
+	</select>
+</mapper>

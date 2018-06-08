@@ -1,0 +1,80 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.broctagon.trad.rm.db.dao.OpenTradeDao">
+	<resultMap id="TradeResult" type="TradeModel">	
+		  <id property="clientid" column="ClientID"/>
+		  <id property="groupid" column="GroupID"/>
+		  <id property="accountid" column="AccountID"/>
+		  <id property="boAccountid" column="BoAccountID"/>
+		  <id property="reqid" column="RequestID"/>
+		  <id property="orderid" column="OrderID"/>
+		  <id property="orderstatus" column="OrderStatus"/>
+		  <id property="expirytime" column="ExpiryTime"/>
+		  <id property="opentime" column="OpenTime"/>
+		  <id property="openprice" column="OpenPrice"/>
+		  <id property="closeprice" column="ClosePrice"/>
+		  <id property="direction" column="Direction"/>
+		  <id property="amount" column="Amount"/>
+		  <id property="payout" column="PayOut"/>
+		  <id property="assetid" column="AssetID"/>
+	</resultMap>
+	<!-- For open trades -->	
+	<select id="selectOpenTradeByClientid" resultType="TradeModel" parameterType="int" resultMap="TradeResult">
+	    SELECT * from openposition WHERE ClientID = #{clientid}
+	</select>
+
+	<select id="selectAllOpenTrade" resultType="TradeModel" resultMap="TradeResult">
+	    SELECT * from openposition
+	</select>
+ 	<insert id="insertOpenTrade" parameterType="TradeModel" >
+		{
+			call insertOpenPosition(
+				#{clientid},
+				#{groupid},		
+				#{accountid}, 
+				#{boAccountid},	
+				#{reqid}, 
+				#{orderid}, 
+				#{orderstatus},
+				#{expirytime},
+				#{opentime},
+				#{openprice},
+				#{closeprice},
+				#{direction},
+				#{amount},
+				#{payout},
+				#{assetid}
+			)		
+		}
+	</insert> 
+	
+	<insert id="insertOpenTrades" parameterType="list" >		
+			INSERT INTO `openposition` 
+			(`ClientID`,`GroupID`,`AccountID`,`BoAccountID`,`RequestID`,`OrderID`,`OrderStatus`,`ExpiryTime`,`OpenTime`,`OpenPrice`,`ClosePrice`,`Direction`,`Amount`,`PayOut`, `AssetID`) 
+			VALUES
+			<foreach item="tradeModel" index="index" collection="list" separator=",">			
+				(#{tradeModel.clientid}, #{tradeModel.groupid}, #{tradeModel.accountid}, #{tradeModel.boAccountid}, #{tradeModel.reqid}, #{tradeModel.orderid}, 
+				#{tradeModel.orderstatus}, #{tradeModel.expirytime}, #{tradeModel.opentime}, #{tradeModel.openprice}, #{tradeModel.closeprice}, #{tradeModel.direction},
+				#{tradeModel.amount}, #{tradeModel.payout}, #{tradeModel.assetid})		
+			</foreach>
+			ON DUPLICATE KEY UPDATE
+				ClientID = VALUES(ClientID), GroupID = VALUES(GroupID), AccountID = VALUES(AccountID), BoAccountID = VALUES(BoAccountID), RequestID = VALUES(RequestID), 
+				OrderStatus = VALUES(OrderStatus), ExpiryTime = VALUES(ExpiryTime), OpenTime = VALUES(OpenTime), OpenPrice = VALUES(OpenPrice), ClosePrice = VALUES(ClosePrice), Direction = VALUES(Direction), 
+				Amount = VALUES(Amount), PayOut = VALUES(PayOut), AssetID = VALUES(AssetID); 		
+	</insert> 
+	
+	<delete id="deleteOpenTrade" parameterType="String">
+		DELETE FROM openposition WHERE OrderID =#{orderid}  	    
+	</delete>
+	
+	<delete id="deleteOpenTrades" parameterType="java.util.List">
+		DELETE FROM openposition WHERE OrderID IN (
+		<foreach index="index" item="orderid" collection="list" separator=",">
+			#{orderid}
+		</foreach>
+		);	  	    
+	</delete>
+	
+</mapper>

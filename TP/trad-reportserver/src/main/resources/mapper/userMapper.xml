@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.broctagon.trad.reportserver.dao.UserDao">
+
+	<select id="getUserByLoginId" resultType="User" parameterType="int">
+		SELECT 
+			LOGIN, `GROUP`, `ENABLE`, ENABLE_CHANGE_PASS, ENABLE_READONLY, ENABLE_OTP, PASSWORD_PHONE, `NAME`, COUNTRY, CITY, 
+			STATE, ZIPCODE, ADDRESS, LEAD_SOURCE, PHONE, EMAIL, `COMMENT`, ID, `STATUS`, REGDATE, 
+			LASTDATE, LEVERAGE, AGENT_ACCOUNT, `TIMESTAMP`, BALANCE, PREVMONTHBALANCE, PREVBALANCE, CREDIT, INTERESTRATE, TAXES, 
+			SEND_REPORTS, MQID, USER_COLOR, EQUITY, MARGIN, MARGIN_LEVEL, MARGIN_FREE, CURRENCY, API_DATA, MODIFY_TIME  
+		FROM mt4_users WHERE LOGIN = #{loginId} ;
+	</select>
+
+	<select id="getUsersByLoginIds" resultType="User" parameterType="java.util.ArrayList">
+		SELECT 
+			LOGIN, `GROUP`, `ENABLE`, ENABLE_CHANGE_PASS, ENABLE_READONLY, ENABLE_OTP, PASSWORD_PHONE, `NAME`, COUNTRY, CITY, 
+			STATE, ZIPCODE, ADDRESS, LEAD_SOURCE, PHONE, EMAIL, `COMMENT`, ID, `STATUS`, REGDATE, 
+			LASTDATE, LEVERAGE, AGENT_ACCOUNT, `TIMESTAMP`, BALANCE, PREVMONTHBALANCE, PREVBALANCE, CREDIT, INTERESTRATE, TAXES, 
+			SEND_REPORTS, MQID, USER_COLOR, EQUITY, MARGIN, MARGIN_LEVEL, MARGIN_FREE, CURRENCY, API_DATA, MODIFY_TIME  
+		FROM mt4_users
+		<where>
+			LOGIN IN ( 
+			<foreach item="loginId" index="index" collection="list" separator=",">
+				#{loginId}
+			</foreach>
+			) ;
+		</where>
+	</select>
+	
+	<select id="addUser" parameterType="User" resultType="int" statementType="CALLABLE">
+			{
+			call addUser(
+				#{login,  				jdbcType=INTEGER, 	mode=IN},
+				#{group,  				jdbcType=CHAR,    	mode=IN},
+				#{enable,				jdbcType=INTEGER, 	mode=IN},
+				#{enable_change_pass,   jdbcType=INTEGER, 	mode=IN},
+				#{enable_readOnly,		jdbcType=INTEGER, 	mode=IN},
+				#{enableOpt, 			jdbcType=INTEGER, 	mode=IN},
+				#{password_phone, 		jdbcType=CHAR, 	  	mode=IN},
+				#{name, 				jdbcType=CHAR, 	  	mode=IN},
+				#{country, 				jdbcType=CHAR, 	  	mode=IN},
+				#{city, 				jdbcType=CHAR, 	  	mode=IN},<!-- 10 -->
+				#{state, 				jdbcType=CHAR, 	 	mode=IN},
+				#{zipCode, 				jdbcType=CHAR,    	mode=IN},
+				#{address, 				jdbcType=CHAR,    	mode=IN},
+				#{lead_source, 			jdbcType=CHAR,      mode=IN},
+				#{phone, 				jdbcType=CHAR,    	mode=IN},
+				#{email, 				jdbcType=CHAR,   	mode=IN},
+				#{comment,			 	jdbcType=CHAR,      mode=IN},
+				#{id, 					jdbcType=CHAR,   	mode=IN},
+				#{status, 				jdbcType=CHAR,    	mode=IN},
+				#{regDate, 				jdbcType=TIMESTAMP, mode=IN},<!-- 20 -->
+				#{lastDate, 			jdbcType=TIMESTAMP, mode=IN},
+				#{leverage,				jdbcType=INTEGER,   mode=IN},
+				#{agent_account, 		jdbcType=INTEGER,   mode=IN},
+				#{timestamp,            jdbcType=INTEGER,   mode=IN},
+				#{balance, 				jdbcType=DOUBLE,    mode=IN},
+				#{prevMonthBalance, 	jdbcType=DOUBLE,    mode=IN},
+				#{prevBalance, 			jdbcType=DOUBLE,    mode=IN},
+				#{credit, 				jdbcType=DOUBLE, 	mode=IN},
+				#{interestrate, 		jdbcType=DOUBLE, 	mode=IN},
+				#{taxes, 				jdbcType=DOUBLE, 	mode=IN},<!-- 30 -->
+				#{send_report, 			jdbcType=INTEGER, 	mode=IN},
+				#{mqid, 				jdbcType=NUMERIC, 	mode=IN},
+				#{userColor, 			jdbcType=INTEGER,   mode=IN},
+				#{equity, 				jdbcType=DOUBLE, 	mode=IN},
+				#{margin, 				jdbcType=DOUBLE, 	mode=IN},
+				#{margin_level, 		jdbcType=DOUBLE, 	mode=IN},
+				#{margin_free, 			jdbcType=DOUBLE, 	mode=IN},
+				#{currency, 			jdbcType=CHAR, 		mode=IN},
+				#{api_data, 			jdbcType=BLOB, 		mode=IN},
+				#{modify_time, 			jdbcType=TIMESTAMP, mode=IN} <!-- 40 -->
+			)
+		}
+	</select>
+	
+	<insert id="addUsers" parameterType="list">
+		INSERT INTO mt4_users(
+				LOGIN, `GROUP`, `ENABLE`, ENABLE_CHANGE_PASS, ENABLE_READONLY, 
+				ENABLE_OTP, PASSWORD_PHONE, `NAME`, COUNTRY, CITY, 
+				STATE, ZIPCODE, ADDRESS, LEAD_SOURCE, PHONE, 
+				EMAIL, `COMMENT`, ID, `STATUS`, REGDATE, 
+				LASTDATE, LEVERAGE, AGENT_ACCOUNT, `TIMESTAMP`, BALANCE, 
+				PREVMONTHBALANCE, PREVBALANCE, CREDIT, INTERESTRATE, TAXES, 
+				SEND_REPORTS, MQID, USER_COLOR, EQUITY, MARGIN, 
+				MARGIN_LEVEL, MARGIN_FREE, CURRENCY, API_DATA, MODIFY_TIME
+		)VALUES
+		<foreach item="user" index="index" collection="list" separator=",">
+		(
+				#{user.login}, #{user.group}, #{user.enable}, #{user.enable_change_pass}, #{user.enable_readOnly}, 
+				#{user.enableOpt}, #{user.password_phone}, #{user.name}, #{user.country}, #{user.city}, 
+				#{user.state}, #{user.zipCode}, #{user.address}, #{user.lead_source}, #{user.phone}, 
+				#{user.email}, #{user.comment}, #{user.id}, #{user.status}, #{user.regDate}, 
+				#{user.lastDate}, #{user.leverage}, #{user.agent_account}, #{user.timestamp}, #{user.balance}, 
+				#{user.prevMonthBalance}, #{user.prevBalance}, #{user.credit}, #{user.interestrate}, #{user.taxes}, 
+				#{user.send_report}, #{user.mqid}, #{user.userColor}, #{user.equity}, #{user.margin}, 
+				#{user.margin_level}, #{user.margin_free}, #{user.currency}, #{user.api_data}, #{user.modify_time}
+		)
+		</foreach>
+		ON DUPLICATE KEY UPDATE 
+		LOGIN = VALUES(LOGIN), `GROUP` = VALUES(`GROUP`), `ENABLE` = VALUES(`ENABLE`), ENABLE_CHANGE_PASS = VALUES(ENABLE_CHANGE_PASS), ENABLE_READONLY = VALUES(ENABLE_CHANGE_PASS),
+		ENABLE_OTP = VALUES(ENABLE_OTP), PASSWORD_PHONE = VALUES(PASSWORD_PHONE), `NAME` = VALUES(`NAME`), COUNTRY = VALUES(COUNTRY), CITY = VALUES(CITY), 
+		STATE = VALUES(STATE), ZIPCODE = VALUES(ZIPCODE), ADDRESS = VALUES(ADDRESS), LEAD_SOURCE = VALUES(LEAD_SOURCE), PHONE = VALUES(PHONE), 
+		EMAIL = VALUES(EMAIL), `COMMENT` = VALUES(`COMMENT`), ID = VALUES(ID), `STATUS` = VALUES(`STATUS`), REGDATE = VALUES(REGDATE), 
+		LASTDATE = VALUES(LASTDATE), LEVERAGE = VALUES(LEVERAGE), AGENT_ACCOUNT = VALUES(AGENT_ACCOUNT), `TIMESTAMP` = VALUES(`TIMESTAMP`), BALANCE = VALUES(BALANCE), 
+		PREVMONTHBALANCE = VALUES(PREVMONTHBALANCE), PREVBALANCE = VALUES(PREVBALANCE), CREDIT = VALUES(CREDIT), INTERESTRATE = VALUES(INTERESTRATE), TAXES = VALUES(TAXES), 
+		SEND_REPORTS = VALUES(SEND_REPORTS), MQID = VALUES(MQID), USER_COLOR = VALUES(USER_COLOR), EQUITY = VALUES(EQUITY), MARGIN = VALUES(MARGIN), 
+		MARGIN_LEVEL = VALUES(MARGIN_LEVEL), MARGIN_FREE = VALUES(MARGIN_FREE), CURRENCY = VALUES(CURRENCY), API_DATA = VALUES(API_DATA), MODIFY_TIME = VALUES(MODIFY_TIME);
+	</insert>
+	
+	<update id="updateUser" parameterType="User">
+		UPDATE mt4_users SET 
+			`GROUP` = #{group}, `ENABLE` = #{enable}, ENABLE_CHANGE_PASS = #{enable_change_pass}, ENABLE_READONLY = #{enable_readOnly}, ENABLE_OTP = #{enableOpt},
+			PASSWORD_PHONE = #{password_phone}, `NAME` = #{name}, COUNTRY = #{country}, CITY = #{city}, STATE = #{state}, 
+			ZIPCODE = #{zipCode}, ADDRESS = #{address}, LEAD_SOURCE = #{lead_source}, PHONE = #{phone},  EMAIL = #{email}, 
+			`COMMENT` = #{comment}, ID = #{id}, `STATUS` = #{status}, REGDATE = #{regDate}, LASTDATE = #{lastDate}, 
+			LEVERAGE = #{leverage}, AGENT_ACCOUNT = #{agent_account}, `TIMESTAMP` = #{timestamp}, BALANCE = #{balance}, PREVMONTHBALANCE = #{prevMonthBalance}, 
+			PREVBALANCE = #{prevBalance}, CREDIT = #{credit}, INTERESTRATE = #{interestrate}, TAXES = #{taxes}, SEND_REPORTS = #{send_report}, 
+			MQID = #{mqid}, USER_COLOR = #{userColor}, EQUITY = #{equity}, MARGIN = #{margin}, MARGIN_LEVEL = #{margin_level}, 
+			MARGIN_FREE = #{margin_free}, CURRENCY = #{currency}, API_DATA = #{api_data}, MODIFY_TIME = #{modify_time}
+		WHERE 
+			LOGIN = #{login}
+	</update>
+	
+	<update id="updateUsers" parameterType="java.util.ArrayList">
+		START TRANSACTION;
+		REPLACE INTO mt4_users(
+			LOGIN, `GROUP`, `ENABLE`, ENABLE_CHANGE_PASS, ENABLE_READONLY, ENABLE_OTP, PASSWORD_PHONE, `NAME`, COUNTRY, CITY, 
+			STATE, ZIPCODE, ADDRESS, LEAD_SOURCE, PHONE, EMAIL, `COMMENT`, ID, `STATUS`, REGDATE, 
+			LASTDATE, LEVERAGE, AGENT_ACCOUNT, `TIMESTAMP`, BALANCE, PREVMONTHBALANCE, PREVBALANCE, CREDIT, INTERESTRATE, TAXES, 
+			SEND_REPORTS, MQID, USER_COLOR, EQUITY, MARGIN, MARGIN_LEVEL, MARGIN_FREE, CURRENCY, API_DATA, MODIFY_TIME  
+		)VALUES 
+		<foreach item="user" index="index" collection="list" separator=",">
+		(	
+		 	#{user.login}, #{user.group}, #{user.enable}, #{user.enable_change_pass}, #{user.enable_readOnly},  
+		 	#{user.enableOpt}, #{user.password_phone}, #{user.name}, #{user.country}, #{user.city},
+		 	#{user.state}, #{user.zipCode}, #{user.address}, #{user.lead_source}, #{user.phone}, 
+		 	#{user.email}, #{user.comment}, #{user.id}, #{user.status}, #{user.regDate}, 
+		 	#{user.lastDate}, #{user.leverage}, #{user.agent_account}, #{user.timestamp}, #{user.balance}, 
+		 	#{user.prevMonthBalance}, #{user.prevBalance}, #{user.credit}, #{user.interestrate}, #{user.taxes}, 
+		 	#{user.send_report}, #{user.mqid}, #{user.userColor}, #{user.equity}, #{user.margin}, 
+		 	#{user.margin_level}, #{user.margin_free}, #{user.currency}, #{user.api_data}, #{user.modify_time}
+		)
+		</foreach>
+		;
+		COMMIT;
+	</update>
+	
+	<insert id="updateShortUsers" parameterType="list">
+		INSERT INTO mt4_users (
+				LOGIN,  LEVERAGE,BALANCE, PREVMONTHBALANCE, PREVBALANCE, CREDIT, 
+				TAXES, MARGIN, MARGIN_LEVEL, MARGIN_FREE, CURRENCY
+		)VALUES
+		<foreach item="user" index="index" collection="list" separator=",">
+		(
+				#{user.login},#{user.leverage}, #{user.balance}, #{user.prevMonthBalance}, #{user.prevBalance}, #{user.credit},
+				#{user.taxes}, #{user.margin}, #{user.margin_level}, #{user.margin_free}, #{user.currency}
+		)
+		</foreach>
+		ON DUPLICATE KEY UPDATE 
+		LOGIN = VALUES(LOGIN), LEVERAGE = VALUES(LEVERAGE), BALANCE = VALUES(BALANCE), PREVMONTHBALANCE = VALUES(PREVMONTHBALANCE), PREVBALANCE = VALUES(PREVBALANCE), CREDIT = VALUES(CREDIT),
+		TAXES = VALUES(TAXES), MARGIN = VALUES(MARGIN), MARGIN_LEVEL = VALUES(MARGIN_LEVEL), MARGIN_FREE = VALUES(MARGIN_FREE), CURRENCY = VALUES(CURRENCY);
+	</insert>
+	
+	<update id="updateBalanceUser" parameterType="BalanceUser">
+		update mt4_users set
+		BALANCE = #{balance},PREVBALANCE = #{prevBalance}, MARGIN = #{margin}, MARGIN_LEVEL = #{margin_level}, MARGIN_FREE = #{margin_free}
+		where LOGIN=#{login};
+	</update>
+	
+	<delete id="deleteUserByLoginId" parameterType="int">
+		DELETE FROM mt4_users WHERE LOGIN = #{loginId} ;
+	</delete>
+	
+	<delete id="deleteUsersByLoginIds" parameterType="java.util.ArrayList">
+		DELETE FROM mt4_users WHERE LOGIN IN ( 
+		<foreach item="loginId" index="index" collection="list" separator=",">
+			#{loginId}
+		</foreach>
+		)
+	</delete>
+</mapper>

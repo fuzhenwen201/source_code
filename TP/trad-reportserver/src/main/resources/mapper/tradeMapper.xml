@@ -1,0 +1,191 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.broctagon.trad.reportserver.dao.TradeDao">
+	
+	<select id="getTradeByTicketId" resultType="Trade" parameterType="int">
+		SELECT 
+			TICKET, LOGIN, SYMBOL, DIGITS, CMD, VOLUME, OPEN_TIME, OPEN_PRICE, SL, TP,
+			CLOSE_TIME, EXPIRATION, REASON, CONV_RATE1, CONV_RATE2, COMMISSION, COMMISSION_AGENT, SWAPS, CLOSE_PRICE, PROFIT,
+			TAXES, COMMENT, INTERNAL_ID, MARGIN_RATE, TIMESTAMP, MAGIC, GW_VOLUME, GW_OPEN_PRICE, GW_CLOSE_PRICE, MODIFY_TIME 
+		FROM MT4_TRADES 
+		WHERE TICKET = #{ticketId} ;
+	</select>
+	
+	<select id="getTradesByTicketIds" resultType="Trade" parameterType="java.util.ArrayList">
+		SELECT 
+			TICKET, LOGIN, SYMBOL, DIGITS, CMD, VOLUME, OPEN_TIME, OPEN_PRICE, SL, TP,
+			CLOSE_TIME, EXPIRATION, REASON, CONV_RATE1, CONV_RATE2, COMMISSION, COMMISSION_AGENT, SWAPS, CLOSE_PRICE, PROFIT,
+			TAXES, COMMENT, INTERNAL_ID, MARGIN_RATE, TIMESTAMP, MAGIC, GW_VOLUME, GW_OPEN_PRICE, GW_CLOSE_PRICE, MODIFY_TIME 
+		FROM MT4_TRADES 
+		WHERE TICKET IN ( 
+		<foreach item="ticketId" index="index" collection="list" separator=",">
+			#{ticketId} 
+		</foreach>
+		) ;
+	</select>
+	
+	<select id="getTicketByOrderId" resultType="Integer" parameterType="String">
+		select TICKET from mt4_trades_full where ORDERID=#{orderId};
+	</select> 
+	
+	<select id="getTradeByOrderId" resultType="Trade" parameterType="String">				
+		SELECT 
+			TICKET, LOGIN, SYMBOL, DIGITS, CMD, VOLUME, OPEN_TIME, OPEN_PRICE, SL, TP,
+			CLOSE_TIME, EXPIRATION, REASON, CONV_RATE1, CONV_RATE2, COMMISSION, COMMISSION_AGENT, SWAPS, CLOSE_PRICE, PROFIT,
+			TAXES, COMMENT, INTERNAL_ID, MARGIN_RATE, TIMESTAMP, MAGIC, GW_VOLUME, GW_OPEN_PRICE, GW_CLOSE_PRICE, MODIFY_TIME 
+		FROM mt4_trades 
+		WHERE EXISTS (SELECT TICKET FROM mt4_trades_full WHERE mt4_trades.TICKET=mt4_trades_full.TICKET AND ORDERID=#{orderId});
+	</select>
+	
+	<!-- <select id="getTradeByOrderId" resultType="Trade" parameterType="String">
+		SELECT 
+			TICKET, LOGIN, SYMBOL, DIGITS, CMD, VOLUME, OPEN_TIME, OPEN_PRICE, SL, TP,
+			CLOSE_TIME, EXPIRATION, REASON, CONV_RATE1, CONV_RATE2, COMMISSION, COMMISSION_AGENT, SWAPS, CLOSE_PRICE, PROFIT,
+			TAXES, COMMENT, INTERNAL_ID, MARGIN_RATE, TIMESTAMP, MAGIC, GW_VOLUME, GW_OPEN_PRICE, GW_CLOSE_PRICE, MODIFY_TIME 
+		FROM mt4_trades 
+		WHERE TICKET IN (select TICKET from mt4_trades_full where ORDERID=#{orderId});
+	</select> -->
+
+	<select id="addTrade" resultType="int" parameterType="Trade" statementType="CALLABLE">
+	{
+		call addTrade(
+			#{ticket, 			jdbcType=INTEGER, 	mode=IN},
+			#{login, 			jdbcType=INTEGER, 	mode=IN},
+			#{symbol, 			jdbcType=CHAR, 		mode=IN},
+			#{digits, 			jdbcType=INTEGER, 	mode=IN},
+			#{cmd, 				jdbcType=INTEGER, 	mode=IN},
+			#{volume, 			jdbcType=INTEGER, 	mode=IN},
+			#{open_time, 		jdbcType=TIMESTAMP, mode=IN},
+			#{open_price, 		jdbcType=DOUBLE, 	mode=IN},
+			#{sl, 				jdbcType=DOUBLE, 	mode=IN},
+			#{tp, 				jdbcType=DOUBLE, 	mode=IN},
+			#{close_time, 		jdbcType=TIMESTAMP, mode=IN},
+			#{expiration, 		jdbcType=TIMESTAMP, mode=IN},
+			#{reason, 			jdbcType=INTEGER, 	mode=IN},
+			#{conv_rate1, 		jdbcType=DOUBLE, 	mode=IN},
+			#{conv_rate2, 		jdbcType=DOUBLE, 	mode=IN},
+			#{commission, 		jdbcType=DOUBLE, 	mode=IN},
+			#{commission_agent, jdbcType=DOUBLE, 	mode=IN},
+			#{swaps, 			jdbcType=DOUBLE, 	mode=IN},
+			#{close_price, 		jdbcType=DOUBLE, 	mode=IN},
+			#{profit, 			jdbcType=DOUBLE, 	mode=IN},
+			#{taxes, 			jdbcType=DOUBLE, 	mode=IN},
+			#{comment, 			jdbcType=CHAR, 		mode=IN},
+			#{internal_id, 		jdbcType=INTEGER, 	mode=IN},
+			#{margin_rate, 		jdbcType=DOUBLE, 	mode=IN},
+			#{timestamp, 		jdbcType=INTEGER, 	mode=IN},
+			#{magic, 			jdbcType=INTEGER, 	mode=IN},
+			#{gw_volume, 		jdbcType=INTEGER, 	mode=IN},
+			#{gw_open_price, 	jdbcType=INTEGER, 	mode=IN},
+			#{gw_close_price, 	jdbcType=INTEGER, 	mode=IN},
+			#{modify_time, 		jdbcType=TIMESTAMP, mode=IN}
+		)
+	}
+	</select>
+	
+	<insert id="addTrades" parameterType="java.util.List">
+		INSERT INTO mt4_trades_full(	
+				ORDERID, LOGIN, SYMBOL, DIGITS, CMD,
+				VOLUME, OPEN_TIME, OPEN_PRICE, SL, TP,
+				CLOSE_TIME, EXPIRATION, REASON, CONV_RATE1, CONV_RATE2, 
+				COMMISSION, COMMISSION_AGENT, SWAPS, CLOSE_PRICE, PROFIT,
+				TAXES, COMMENT, INTERNAL_ID, MARGIN_RATE, `TIMESTAMP`, 
+				MAGIC, GW_VOLUME, GW_OPEN_PRICE, GW_CLOSE_PRICE, MODIFY_TIME 
+		)VALUES
+		<foreach item="trade" index="index" collection="list" separator=",">
+		(
+				#{trade.orderid}, #{trade.login}, #{trade.symbol}, #{trade.digits}, #{trade.cmd},
+				#{trade.volume}, #{trade.open_time}, #{trade.open_price}, #{trade.sl}, #{trade.tp},
+				#{trade.close_time}, #{trade.expiration}, #{trade.reason}, #{trade.conv_rate1}, #{trade.conv_rate2}, 
+				#{trade.commission}, #{trade.commission_agent}, #{trade.swaps}, #{trade.close_price}, #{trade.profit},
+				#{trade.taxes}, #{trade.comment}, #{trade.internal_id}, #{trade.margin_rate}, #{trade.timestamp}, 
+				#{trade.magic}, #{trade.gw_volume}, #{trade.gw_open_price}, #{trade.gw_close_price}, #{trade.modify_time} 
+		)
+		</foreach>
+		ON DUPLICATE KEY UPDATE 
+				ORDERID = VALUES(ORDERID), LOGIN = VALUES(LOGIN), SYMBOL = VALUES(SYMBOL), DIGITS = VALUES(DIGITS), CMD = VALUES(CMD),
+				VOLUME = VALUES(VOLUME), OPEN_TIME = VALUES(OPEN_TIME), OPEN_PRICE = VALUES(OPEN_PRICE), SL = VALUES(SL), TP = VALUES(TP),
+				CLOSE_TIME = VALUES(CLOSE_TIME), EXPIRATION = VALUES(EXPIRATION), REASON = VALUES(REASON), CONV_RATE1 = VALUES(CONV_RATE1), CONV_RATE2 = VALUES(CONV_RATE2), 
+				COMMISSION = VALUES(COMMISSION), COMMISSION_AGENT = VALUES(COMMISSION_AGENT), SWAPS = VALUES(SWAPS), CLOSE_PRICE = VALUES(CLOSE_PRICE), PROFIT = VALUES(PROFIT),
+				TAXES = VALUES(TAXES), COMMENT = VALUES(COMMENT), INTERNAL_ID = VALUES(INTERNAL_ID), MARGIN_RATE = VALUES(MARGIN_RATE), `TIMESTAMP` = VALUES(TIMESTAMP), 
+				MAGIC = VALUES(MAGIC), GW_VOLUME = VALUES(GW_VOLUME), GW_OPEN_PRICE = VALUES(GW_OPEN_PRICE), GW_CLOSE_PRICE = VALUES(GW_CLOSE_PRICE), MODIFY_TIME = VALUES(MODIFY_TIME);
+	</insert>
+	
+	<select id="updateTrade" resultType="int" parameterType="Trade" statementType="CALLABLE">
+	{
+		call updateTrade(
+			#{ticket, 			jdbcType=INTEGER, 	mode=IN},
+			#{login, 			jdbcType=INTEGER, 	mode=IN},
+			#{symbol, 			jdbcType=CHAR, 		mode=IN},
+			#{digits, 			jdbcType=INTEGER, 	mode=IN},
+			#{cmd, 				jdbcType=INTEGER, 	mode=IN},
+			#{volume, 			jdbcType=INTEGER, 	mode=IN},
+			#{open_time, 		jdbcType=TIMESTAMP, mode=IN},
+			#{open_price, 		jdbcType=DOUBLE, 	mode=IN},
+			#{sl, 				jdbcType=DOUBLE, 	mode=IN},
+			#{tp, 				jdbcType=DOUBLE, 	mode=IN},
+			#{close_time, 		jdbcType=TIMESTAMP, mode=IN},
+			#{expiration, 		jdbcType=TIMESTAMP, mode=IN},
+			#{reason, 			jdbcType=INTEGER, 	mode=IN},
+			#{conv_rate1, 		jdbcType=DOUBLE, 	mode=IN},
+			#{conv_rate2, 		jdbcType=DOUBLE, 	mode=IN},
+			#{commission, 		jdbcType=DOUBLE, 	mode=IN},
+			#{commission_agent, jdbcType=DOUBLE, 	mode=IN},
+			#{swaps, 			jdbcType=DOUBLE, 	mode=IN},
+			#{close_price, 		jdbcType=DOUBLE, 	mode=IN},
+			#{profit, 			jdbcType=DOUBLE, 	mode=IN},
+			#{taxes, 			jdbcType=DOUBLE, 	mode=IN},
+			#{comment, 			jdbcType=CHAR, 		mode=IN},
+			#{internal_id, 		jdbcType=INTEGER, 	mode=IN},
+			#{margin_rate, 		jdbcType=DOUBLE, 	mode=IN},
+			#{timestamp, 		jdbcType=INTEGER, 	mode=IN},
+			#{magic, 			jdbcType=INTEGER, 	mode=IN},
+			#{gw_volume, 		jdbcType=INTEGER, 	mode=IN},
+			#{gw_open_price, 	jdbcType=INTEGER, 	mode=IN},
+			#{gw_close_price, 	jdbcType=INTEGER, 	mode=IN},
+			#{modify_time, 		jdbcType=TIMESTAMP, mode=IN}
+		)
+	}
+	</select>
+	
+	<update id="updateTrades" parameterType="java.util.List">
+		START TRANSACTION;
+		REPLACE INTO MT4_TRADES(
+			TICKET, LOGIN, SYMBOL, DIGITS, CMD,
+			VOLUME, OPEN_TIME, OPEN_PRICE, SL, TP,
+			CLOSE_TIME, EXPIRATION, REASON, CONV_RATE1, CONV_RATE2, 
+			COMMISSION, COMMISSION_AGENT, SWAPS, CLOSE_PRICE, PROFIT,
+			TAXES, COMMENT, INTERNAL_ID, MARGIN_RATE, `TIMESTAMP`, 
+			MAGIC, GW_VOLUME, GW_OPEN_PRICE, GW_CLOSE_PRICE, MODIFY_TIME 
+		)VALUES
+		<foreach item="trade" index="index" collection="list" separator=",">
+		(
+			#{trade.ticket}, #{trade.login}, #{trade.symbol}, #{trade.digits}, #{trade.cmd}, 
+			#{trade.volume}, #{trade.open_time}, #{trade.open_price}, #{trade.sl},  #{trade.tp},
+			#{trade.close_time}, #{trade.expiration}, #{trade.reason}, #{trade.conv_rate1}, #{trade.conv_rate2}, 
+			#{trade.commission}, #{trade.commission_agent}, #{trade.swaps}, #{trade.close_price}, #{trade.profit},
+			#{trade.taxes}, #{trade.comment}, #{trade.internal_id}, #{trade.margin_rate}, #{trade.timestamp},
+			 #{trade.magic}, #{trade.gw_volume}, #{trade.gw_open_price}, #{trade.gw_close_price}, #{trade.modify_time}  
+		)
+		</foreach>
+		;
+		COMMIT;
+	</update>
+	
+	<select id="deleteTradeByTicketId" resultType="int" parameterType="int" statementType="CALLABLE">
+	{
+		call deleteTrade(
+			#{ticket, jdbcType=INTEGER, javaType=java.lang.Integer, mode=IN}
+		)
+	}	
+	</select>
+	
+	<delete id="deleteTradesByTicketIds" parameterType="java.util.ArrayList">
+		DELETE FROM MT4_TRADES WHERE TICKET IN (
+			<foreach item="id" index="index" collection="list" separator=",">
+				#{id}
+			</foreach>
+		)
+	</delete>
+</mapper>
+

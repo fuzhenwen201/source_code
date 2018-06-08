@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintechstar.admin.dao.group.IGroupReportDao">
+	
+	<sql id="groupReportColumn">
+		GroupID, IsReport, SmtpServer, TemplatePath, SmtpLogin, 
+		SupportEmail, IsCopyReport, Signature, ModifiedTime
+	</sql>
+	
+	<insert id="saveGroupReport" parameterType="GroupReport">
+		INSERT INTO group_report(<include refid="groupReportColumn" />) VALUES (
+			#{groupId},
+		    #{isReport},
+		    #{smtpServer, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		    #{templatePath, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		    #{smtpLogin, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		    #{supportEmail, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		    #{isCopyReport},
+		    #{signature, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},#{modifiedTime, jdbcType=TIMESTAMP, javaType=java.util.Date, mode=IN}
+	    )
+	</insert>
+
+	<update id="updateGroupReport" parameterType="GroupReport">
+		UPDATE group_report SET 
+			IsReport=#{isReport}, 
+		    SmtpServer=#{smtpServer, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}, 
+		    TemplatePath=#{templatePath, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		    SmtpLogin=#{smtpLogin, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}, 
+		    SupportEmail=#{supportEmail, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}, 
+		    IsCopyReport=#{isCopyReport}, 
+		    Signature=#{signature, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+		    ModifiedTime=#{modifiedTime, jdbcType=TIMESTAMP, javaType=java.util.Date, mode=IN}
+	   WHERE GroupID = #{groupId}
+	</update>
+	
+	<select id="getGroupReportByGroupId" parameterType="int" resultType="GroupReport">
+		SELECT <include refid="groupReportColumn" /> FROM group_report WHERE GroupID = #{groupId}
+	</select>
+</mapper>

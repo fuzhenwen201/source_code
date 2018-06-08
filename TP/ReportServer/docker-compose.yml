@@ -1,0 +1,83 @@
+version: "2"
+services:
+    redis:
+        image: "redis"
+        container_name: redis
+        volumes:
+          - ./database/redis/redis.conf:/etc/redis.conf
+          - ./database/redis/datadir:/var/lib/redis
+        ports:
+          - "5005:6379"
+        command: redis-server /etc/redis.conf
+        tty: true
+    rabbitmq:
+        image: "rabbitmq:3-management"
+        container_name: rabbitmq
+        volumes:
+          - ./rabbitmq/init.sh:/init.sh
+        ports:
+          - "5672:5672"
+          - "15672:15672"
+        command: ./init.sh
+        restart: "always"
+    report:
+       image: "openjdk:8"
+       container_name: report
+       volumes:
+          - ./report/reportserver:/app/reportserver
+          - ./report/configs/application.properties:/app/configs/application.properties
+          - ./report/dev-logs:/app/dev-logs
+          - ./report/logs:/app/logs
+       depends_on:
+          - mysql
+          - redis
+       links:
+          - "mysql"
+          - "redis"
+       working_dir: /app/reportserver
+       command: java -jar ReportServer-1.0.0.jar
+       tty: true
+    reports:
+       image: "openjdk:8"
+       container_name: reports
+       volumes:
+          - ./report/reportserver-source:/app/reportserver-source
+          - ./report/configs/application.properties:/app/configs/application.properties
+          - ./report/dev-logs:/app/dev-logs
+          - ./report/logs:/app/logs
+       depends_on:
+          - mysql
+          - redis
+       links:
+          - "mysql"
+          - "redis"
+       working_dir: /app/reportserver-source
+       command: java -jar ReportServer-Source-1.0.0.jar
+       tty: true
+    centraldb:
+       image: "openjdk:8"
+       container_name: centraldb
+       volumes:
+          - ./report/centraldatabase:/app/centraldatabase
+          - ./report/dev-logs:/app/dev-logs
+       depends_on:
+          - mysql
+          - rabbitmq
+       links:
+          - "mysql"
+          - "rabbitmq"
+       working_dir: /app/centraldatabase
+       command: java -jar CDB_V0.1.5.jar
+       tty: true
+    mysql:
+      image: "mysql/mysql-server:5.6"
+      container_name: mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+      volumes:
+        - ./database/mysqlog:/var/lib/mysql
+        - ./database/mysql/etc:/etc/mysql/conf.d
+        - ./database/mysql/database:/docker-entrypoint-initdb.d/
+      ports:
+        - "3306:3306"
+      restart: "always"

@@ -1,0 +1,109 @@
+Log file created at: 2017/10/24 12:25:10
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1024 12:25:10.239922 21043 Public.cpp:394] InitLogSys ....
+I1024 12:25:10.240218 21043 RealtimeSender.cpp:173] sender 2 module run ...
+
+I1024 12:25:10.248266 21045 tnode.cpp:423] Tnode Init sucess ...
+
+I1024 12:25:10.248746 21044 tnode.cpp:423] Tnode Init sucess ...
+
+I1024 12:25:10.248894 21045 Group_Spread.cpp:133] Show Symbol:AUDCAD, Spread:10
+I1024 12:25:10.248904 21045 Group_Spread.cpp:133] Show Symbol:AUDCHF, Spread:20
+I1024 12:25:10.248906 21045 Group_Spread.cpp:133] Show Symbol:AUDHKD, Spread:30
+I1024 12:25:10.248908 21045 Group_Spread.cpp:133] Show Symbol:AUDJPY, Spread:40
+I1024 12:25:10.248909 21045 Group_Spread.cpp:133] Show Symbol:AUDNZD, Spread:50
+I1024 12:25:10.248911 21045 Group_Spread.cpp:133] Show Symbol:AUDSGD, Spread:60
+I1024 12:25:10.248914 21045 Group_Spread.cpp:133] Show Symbol:AUDUSD, Spread:70
+I1024 12:25:10.248915 21045 Group_Spread.cpp:133] Show Symbol:CADCHF, Spread:80
+I1024 12:25:10.248916 21045 Group_Spread.cpp:133] Show Symbol:CADHKD, Spread:90
+I1024 12:25:10.248919 21045 Group_Spread.cpp:133] Show Symbol:CADJPY, Spread:100
+I1024 12:25:10.248920 21045 Group_Spread.cpp:133] Show Symbol:CADSGD, Spread:110
+I1024 12:25:10.248922 21045 Group_Spread.cpp:133] Show Symbol:CHFHKD, Spread:120
+I1024 12:25:10.248924 21045 Group_Spread.cpp:133] Show Symbol:CHFJPY, Spread:130
+I1024 12:25:10.248925 21045 Group_Spread.cpp:133] Show Symbol:CHFZAR, Spread:140
+I1024 12:25:10.248927 21045 Group_Spread.cpp:133] Show Symbol:EURAUD, Spread:150
+I1024 12:25:10.248929 21045 Group_Spread.cpp:133] Show Symbol:EURCAD, Spread:160
+I1024 12:25:10.248930 21045 Group_Spread.cpp:133] Show Symbol:EURCHF, Spread:170
+I1024 12:25:10.248932 21045 Group_Spread.cpp:133] Show Symbol:EURCZK, Spread:180
+I1024 12:25:10.248934 21045 Group_Spread.cpp:133] Show Symbol:EURDKK, Spread:190
+I1024 12:25:10.248935 21045 Group_Spread.cpp:133] Show Symbol:EURGBP, Spread:200
+I1024 12:25:10.248937 21045 Group_Spread.cpp:133] Show Symbol:EURHKD, Spread:210
+I1024 12:25:10.248939 21045 Group_Spread.cpp:133] Show Symbol:EURHUF, Spread:220
+I1024 12:25:10.248941 21045 Group_Spread.cpp:133] Show Symbol:EURJPY, Spread:230
+I1024 12:25:10.248942 21045 Group_Spread.cpp:133] Show Symbol:EURNOK, Spread:240
+I1024 12:25:10.248944 21045 Group_Spread.cpp:133] Show Symbol:EURNZD, Spread:250
+I1024 12:25:10.248946 21045 Group_Spread.cpp:133] Show Symbol:EURPLN, Spread:260
+I1024 12:25:10.248947 21045 Group_Spread.cpp:133] Show Symbol:EURSEK, Spread:270
+I1024 12:25:10.248950 21045 Group_Spread.cpp:133] Show Symbol:EURSGD, Spread:280
+I1024 12:25:10.248951 21045 Group_Spread.cpp:133] Show Symbol:EURTRY, Spread:290
+I1024 12:25:10.248953 21045 Group_Spread.cpp:133] Show Symbol:EURUSD, Spread:300
+I1024 12:25:10.248955 21045 Group_Spread.cpp:133] Show Symbol:EURZAR, Spread:310
+I1024 12:25:10.248956 21045 Group_Spread.cpp:133] Show Symbol:GBPAUD, Spread:320
+I1024 12:25:10.248958 21045 Group_Spread.cpp:133] Show Symbol:GBPCAD, Spread:330
+I1024 12:25:10.248960 21045 Group_Spread.cpp:133] Show Symbol:GBPCHF, Spread:340
+I1024 12:25:10.248961 21045 Group_Spread.cpp:133] Show Symbol:GBPHKD, Spread:350
+I1024 12:25:10.248963 21045 Group_Spread.cpp:133] Show Symbol:GBPJPY, Spread:360
+I1024 12:25:10.248965 21045 Group_Spread.cpp:133] Show Symbol:GBPNZD, Spread:370
+I1024 12:25:10.248966 21045 Group_Spread.cpp:133] Show Symbol:GBPPLN, Spread:380
+I1024 12:25:10.248968 21045 Group_Spread.cpp:133] Show Symbol:GBPSGD, Spread:390
+I1024 12:25:10.248970 21045 Group_Spread.cpp:133] Show Symbol:GBPUSD, Spread:400
+I1024 12:25:10.248972 21045 Group_Spread.cpp:133] Show Symbol:GBPZAR, Spread:410
+I1024 12:25:10.248973 21045 Group_Spread.cpp:133] Show Symbol:HKDJPY, Spread:420
+I1024 12:25:10.248975 21045 Group_Spread.cpp:133] Show Symbol:NZDCAD, Spread:430
+I1024 12:25:10.248977 21045 Group_Spread.cpp:133] Show Symbol:NZDCHF, Spread:440
+I1024 12:25:10.248978 21045 Group_Spread.cpp:133] Show Symbol:NZDHKD, Spread:450
+I1024 12:25:10.248980 21045 Group_Spread.cpp:133] Show Symbol:NZDJPY, Spread:460
+I1024 12:25:10.248982 21045 Group_Spread.cpp:133] Show Symbol:NZDSGD, Spread:470
+I1024 12:25:10.248984 21045 Group_Spread.cpp:133] Show Symbol:NZDUSD, Spread:480
+I1024 12:25:10.248986 21045 Group_Spread.cpp:133] Show Symbol:SGDCHF, Spread:490
+I1024 12:25:10.249006 21045 Group_Spread.cpp:133] Show Symbol:SGDHKD, Spread:500
+I1024 12:25:10.249007 21045 Group_Spread.cpp:133] Show Symbol:SGDJPY, Spread:510
+I1024 12:25:10.249009 21045 Group_Spread.cpp:133] Show Symbol:TRYJPY, Spread:520
+I1024 12:25:10.249011 21045 Group_Spread.cpp:133] Show Symbol:USDCAD, Spread:530
+I1024 12:25:10.249013 21045 Group_Spread.cpp:133] Show Symbol:USDCHF, Spread:540
+I1024 12:25:10.249014 21045 Group_Spread.cpp:133] Show Symbol:USDCNH, Spread:550
+I1024 12:25:10.249017 21045 Group_Spread.cpp:133] Show Symbol:USDCZK, Spread:560
+I1024 12:25:10.249018 21045 Group_Spread.cpp:133] Show Symbol:USDDKK, Spread:570
+I1024 12:25:10.249020 21045 Group_Spread.cpp:133] Show Symbol:USDHKD, Spread:580
+I1024 12:25:10.249022 21045 Group_Spread.cpp:133] Show Symbol:USDHUF, Spread:590
+I1024 12:25:10.249023 21045 Group_Spread.cpp:133] Show Symbol:USDINR, Spread:600
+I1024 12:25:10.249025 21045 Group_Spread.cpp:133] Show Symbol:USDJPY, Spread:610
+I1024 12:25:10.249027 21045 Group_Spread.cpp:133] Show Symbol:USDMXN, Spread:620
+I1024 12:25:10.249028 21045 Group_Spread.cpp:133] Show Symbol:USDNOK, Spread:630
+I1024 12:25:10.249030 21045 Group_Spread.cpp:133] Show Symbol:USDPLN, Spread:640
+I1024 12:25:10.249032 21045 Group_Spread.cpp:133] Show Symbol:USDSAR, Spread:650
+I1024 12:25:10.249047 21045 Group_Spread.cpp:133] Show Symbol:USDSEK, Spread:660
+I1024 12:25:10.249048 21045 Group_Spread.cpp:133] Show Symbol:USDSGD, Spread:670
+I1024 12:25:10.249050 21045 Group_Spread.cpp:133] Show Symbol:USDTHB, Spread:680
+I1024 12:25:10.249053 21045 Group_Spread.cpp:133] Show Symbol:USDTRY, Spread:690
+I1024 12:25:10.249053 21045 Group_Spread.cpp:133] Show Symbol:USDZAR, Spread:700
+I1024 12:25:10.249065 21045 Group_Spread.cpp:133] Show Symbol:ZARJPY, Spread:710
+I1024 12:25:10.249289 21044 Group_Spread.cpp:133] Show Symbol:AUDCAD, Spread:10
+I1024 12:25:10.249296 21044 Group_Spread.cpp:133] Show Symbol:AUDCHF, Spread:20
+I1024 12:25:10.249300 21044 Group_Spread.cpp:133] Show Symbol:AUDHKD, Spread:30
+I1024 12:25:10.249300 21044 Group_Spread.cpp:133] Show Symbol:AUDJPY, Spread:40
+I1024 12:25:10.249302 21044 Group_Spread.cpp:133] Show Symbol:AUDNZD, Spread:50
+I1024 12:25:10.249305 21044 Group_Spread.cpp:133] Show Symbol:AUDSGD, Spread:60
+I1024 12:25:10.249306 21044 Group_Spread.cpp:133] Show Symbol:AUDUSD, Spread:70
+I1024 12:25:10.249307 21044 Group_Spread.cpp:133] Show Symbol:CADCHF, Spread:80
+I1024 12:25:10.249310 21044 Group_Spread.cpp:133] Show Symbol:CADHKD, Spread:90
+I1024 12:25:10.249311 21044 Group_Spread.cpp:133] Show Symbol:CADJPY, Spread:100
+I1024 12:25:10.249313 21044 Group_Spread.cpp:133] Show Symbol:CADSGD, Spread:110
+I1024 12:25:10.249315 21044 Group_Spread.cpp:133] Show Symbol:CHFHKD, Spread:120
+I1024 12:25:10.249316 21044 Group_Spread.cpp:133] Show Symbol:CHFJPY, Spread:130
+I1024 12:25:10.249318 21044 Group_Spread.cpp:133] Show Symbol:CHFZAR, Spread:140
+I1024 12:25:10.249320 21044 Group_Spread.cpp:133] Show Symbol:EURAUD, Spread:150
+I1024 12:25:10.249321 21044 Group_Spread.cpp:133] Show Symbol:EURCAD, Spread:160
+I1024 12:25:10.249323 21044 Group_Spread.cpp:133] Show Symbol:EURCHF, Spread:170
+I1024 12:25:10.249325 21044 Group_Spread.cpp:133] Show Symbol:EURCZK, Spread:180
+I1024 12:25:10.249326 21044 Group_Spread.cpp:133] Show Symbol:EURDKK, Spread:190
+I1024 12:25:10.249328 21044 Group_Spread.cpp:133] Show Symbol:EURGBP, Spread:200
+I1024 12:25:10.249330 21044 Group_Spread.cpp:133] Show Symbol:EURHKD, Spread:210
+I1024 12:25:10.249331 21044 Group_Spread.cpp:133] Show Symbol:EURHUF, Spread:220
+I1024 12:25:10.249333 21044 Group_Spread.cpp:133] Show Symbol:EURJPY, Spread:230
+I1024 12:25:10.249336 21044 Group_Spread.cpp:133] Show Symbol:EURNOK, Spread:240
+I1024 12:25:10.249337 21044 Group_Spread.cpp:133] Show Symbol:EURNZD, Spread:250
+I1024 12:25:10.249338 21044 Group_Spread.cpp:133] Show Symbol:EURPLN, Spread:260
+I1024 12:25:10.249341 21044 Group_Spread.cpp:133] Show Symbol:EURSEK, Spread:270
+I1024 12:25:10.249342 21044 Group_Spread.cpp:133] Show Symbol:E

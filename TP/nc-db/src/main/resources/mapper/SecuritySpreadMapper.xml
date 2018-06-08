@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.broctagon.trad.networkconfiguration.db.dao.SecuritySpreadDao">
+			
+	<select id="querySecuritySpreadModels" resultType="SecuritySpreadModel" parameterType="java.util.ArrayList">
+		select * from security_fx;
+	</select>
+		
+ 	<insert id="addSecuritySpreadModels" parameterType="list">
+		insert into security_fx (id,security_id,security_name,symbol_list,operator_id,modify_time,describe) values
+		<foreach item="securitySpreadModel" index="index" collection="list" separator= ",">
+		(#{securitySpreadModel.id},#{securitySpreadModel.security_id},#{securitySpreadModel.security_name},#{securitySpreadModel.symbol_list},
+		#{securitySpreadModel.operator_id},datetime('now', 'localtime'),#{securitySpreadModel.describe})		
+		</foreach>;
+	</insert> 
+		
+	<insert id="addSecuritySpreadModel" parameterType="SecuritySpreadModel">
+		insert into security_fx (id,security_id,security_name,symbol_list,operator_id,modify_time,describe) 
+		values (#{id},#{security_id},#{security_name},#{symbol_list},#{operator_id},datetime('now', 'localtime'),#{describe}) 
+<!-- 		on duplicate key update 
+		security_name=values(security_name),symbol_list=values(symbol_list),operator_id=values(operator_id),
+		modify_time=values(modify_time),describe=values(describe); -->
+	</insert>
+	
+	<delete id="deleteAll">
+		delete from security_fx;
+	</delete>	
+		
+</mapper>
+
+

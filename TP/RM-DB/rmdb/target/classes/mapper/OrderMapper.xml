@@ -1,0 +1,79 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ?> -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.broctagon.trad.rm.db.dao.OrderDao">
+
+     <insert id="addOrders" parameterType="list">
+		insert into tb_rm_trade 
+			(ClientID,GroupID,ReqID,OrderID,OrderStatus,
+			ExpiryTime,OpenTime,OpenPrice,ClosePrice,Direction,
+			Amount,ExpiryPeriod,PayOut,AssetID,type,comment) 
+		values 
+		<foreach item="order" index="index" collection="list" separator=",">
+		(
+			#{order.clientid},#{order.groupid},#{order.reqid},#{order.orderid},#{order.orderstatus},
+			#{order.expirytime},#{order.opentime},#{order.openprice},#{order.closeprice},#{order.direction},
+			#{order.amount},#{order.expiryperiod},#{order.payout},#{order.assetid},#{order.type},#{order.comment}			
+		)
+		</foreach>
+		on duplicate key update
+		ClientID=values(ClientID),GroupID=values(GroupID),ReqID=values(ReqID),OrderID=values(OrderID),OrderStatus=values(OrderStatus),
+		ExpiryTime=values(ExpiryTime),OpenTime=values(OpenTime),OpenPrice=values(OpenPrice),ClosePrice=values(ClosePrice),Direction=values(Direction),
+		Amount=values(Amount),ExpiryPeriod=values(ExpiryPeriod),PayOut=values(PayOut),AssetID=values(AssetID),type=values(type),comment=values(comment);
+	</insert>  
+	
+
+	<select id="queryAllOrders" resultType="Order">
+		select ClientID,GroupID,ReqID,OrderID,OrderStatus,
+			ExpiryTime,OpenTime,OpenPrice,ClosePrice,Direction,
+			Amount,ExpiryPeriod,PayOut,AssetID,type,comment
+		from tb_rm_trade;	
+	</select>
+	<select id="queryAllOpenOrders" resultType="Order">
+		select * from tb_rm_trade where OpenPrice>0 and ClosePrice=0
+	</select>
+	<select id="queryAllOpenOrdersInExpiryTime" parameterType="long" resultType="Order">
+		select * from tb_rm_trade where OpenPrice>0 and ClosePrice=0 and ExpiryTime>=#{currentTime}
+	</select>
+	<select id="queryAllClosedOrders" resultType="Order">
+		select * from tb_rm_trade where ClosePrice>0	
+	</select>
+	<select id="queryAllBalanceOrders" resultType="Order">
+		select * from tb_rm_trade where OpenPrice=0	
+	</select>
+	
+	<select id="queryOrdersByClientId" parameterType="int" resultType="Order">
+		select * from tb_rm_trade where ClientID=#{clientid} 
+	</select>
+	<select id="queryOrdersByStartOpenTime" parameterType="long" resultType="Order">
+		select ClientID,GroupID,ReqID,OrderID,OrderStatus,
+			ExpiryTime,OpenTime,OpenPrice,ClosePrice,Direction,
+			Amount,ExpiryPeriod,PayOut,AssetID,type,comment
+		from tb_rm_trade 
+		where OpenTime>=#{startTimerr};	
+	</select>
+	<select id="queryOrdersByStatus" parameterType="int" resultType="Order">
+		select ClientID,GroupID,ReqID,OrderID,OrderStatus,
+			ExpiryTime,OpenTime,OpenPrice,ClosePrice,Direction,
+			Amount,ExpiryPeriod,PayOut,AssetID,type,comment
+		from tb_rm_trade where OrderStatus=#{orderStatus};	
+	</select>
+	
+	<select id="queryOpenOrdersByClientId" parameterType="int" resultType="Order">
+		select * from tb_rm_trade where ClientID=#{clientid} and (OpenPrice>0 and ClosePrice=0)
+	</select>
+	<select id="queryClosedOrdersByClientId" parameterType="int" resultType="Order">
+		select * from tb_rm_trade where ClientID=#{clientid} and (ClosePrice>0)
+	</select>
+	<select id="queryBalanceOrdersByClientId" parameterType="int" resultType="Order">
+		select * from tb_rm_trade where ClientID=#{clientid} and OpenPrice=0	
+	</select>
+	<select id="queryClosedAndBalanceOrdersByClientId" parameterType="int" resultType="Order">
+		select * from tb_rm_trade where ClientID=#{clientid} and (ClosePrice>0 or OpenPrice=0)
+	</select>
+	
+	<select id="queryLatest30ClosedAndBalanceOrdersByClientId" parameterType="int" resultType="Order">
+		SELECT * from db_trad_rm.tb_rm_trade where ClientID=#{clientid} and (ClosePrice>0 or OpenPrice=0) ORDER BY OpenTime DESC LIMIT 30 
+	</select>
+		
+</mapper> 

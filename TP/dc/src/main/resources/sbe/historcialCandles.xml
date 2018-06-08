@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbe:messageSchema xmlns:sbe="http://fixprotocol.io/2016/sbe" id="1" version="2" description="historical candles" byteOrder="bigEndian" package="datacenter">
+	<types>
+		<composite name="messageHeader" description="Message identifiers and length of message root">
+			<type name="blockLength" primitiveType="uint16"/>
+			<type name="templateId" primitiveType="uint16"/>
+			<type name="schemaId" primitiveType="uint16"/>
+			<type name="version" primitiveType="uint16"/>
+		</composite>
+		<composite name="groupSizeEncoding" description="Repeating group dimensions">
+			<type name="blockLength" primitiveType="uint16"/>
+			<type name="numInGroup" primitiveType="uint16"/>
+		</composite>
+	</types>
+	<types>
+		<enum name="BooleanType" encodingType="uint8">
+			<validValue name="T">0</validValue>
+			<validValue name="F">1</validValue>
+		</enum>
+	</types>
+	<types>
+		<type name="Number" primitiveType="uint32"/>
+		<type name="Volumn" primitiveType="uint32"/>
+		<type name="varStringEncoding" primitiveType="char" semanticType="String" length="32" characterEncoding="ASCII"/>
+	</types>
+	<sbe:message name="CandlesData" id="1">
+		<field name="instrument" id="1" type="varStringEncoding"/>
+		<field name="granularity" id="2" type="varStringEncoding"/>
+		<group name="candles" id="3" dimensionType="groupSizeEncoding">
+			<field name="openBid" id="4" type="Number"/>
+			<field name="openAsk" id="5" type="Number"/>
+			<field name="highBid" id="6" type="Number"/>
+			<field name="highAsk" id="7" type="Number"/>
+			<field name="lowBid" id="8" type="Number"/>
+			<field name="lowAsk" id="9" type="Number"/>
+			<field name="closeBid" id="10" type="Number"/>
+			<field name="closeAsk" id="11" type="Number"/>
+			<field name="volumn" id="12" type="Volumn"/>
+			<field name="complete" id="13" type="BooleanType"/>
+			<field name="time" id="14" type="varStringEncoding"/>
+		</group>
+	</sbe:message>
+</sbe:messageSchema>

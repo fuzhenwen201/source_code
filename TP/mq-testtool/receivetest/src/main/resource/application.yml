@@ -1,0 +1,11 @@
+mq:
+    host: 192.168.10.202
+    port: 5672
+    username: demo
+    password: demo
+    vhost: /demo
+    exchange: signal_grp
+    reqQueue: DATAREQ.DATACENTRE
+    reqRoutingKey: DATAREQ.DATACENTRE
+    ansQueue: DATAREQANS.100
+    ansRoutingKey: DATAREQANS.100

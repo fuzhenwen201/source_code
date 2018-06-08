@@ -1,0 +1,31 @@
+#application.yml
+
+mq:
+    host: rabbitmq
+    port: 5672
+    username: demo
+    password: demo
+    vhost: /demo
+    exchange: t_node_grp
+    # error queue
+    errorQueue: CLG.POSITION
+    errorRoutingKey: CLG.POSITION
+    errorHeartBeats : 0
+    balanceErrorListenerQueue : 600
+    # heartbeat queue
+    heartBeatQueue: MONITOR.CLG
+    heartBeatRoutingKeyBase: MONITOR.$
+    heartBeatRoutingKey: MONITOR.CLG
+    mid: 1
+    # control queue
+    controlQueue:
+    controlRoutingKey:
+
+mail:
+    host: smtp.office365.com
+    username: tp_noreply@fintechstar.cn
+    password: Fodu5043
+    to: 
+        monitorGroup: Hugo.Xiao@fintechstar.cn Derek.Fang@fintechstar.cn
+        singalGroup: kanhaiya.sahu@broctagon.com Derek.Fang@fintechstar.cn
+    subject: CLG Message

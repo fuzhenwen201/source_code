@@ -1,0 +1,29 @@
+mq:
+    host: 10.10.10.79
+    port: 5672
+    username: demo
+    password: demo
+    vhost: /demo
+    exchange: t_node_grp
+    # error queue
+    errorQueue: CLG.POSITION
+    errorRoutingKey: CLG.POSITION
+    errorHeartBeats : 0
+    circleQueueSize : 600
+    # heartbeat queue
+    heartBeatQueue: MONITOR.CLG
+    heartBeatRoutingKeyBase: MONITOR.$
+    heartBeatRoutingKey: MONITOR.CLG
+    mid: 1
+    # control queue
+    controlQueue:
+    controlRoutingKey:
+
+mail:
+    host: smtp.office365.com
+    username: tp@1stellar.com
+    password: Kadu1384
+    to: 
+        monitorGroup: cherry@1stellar.com
+        singalGroup: cherry@1stellar.com
+    subject: CLG Message

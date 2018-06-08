@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbe:messageSchema xmlns:sbe="http://fixprotocol.io/2016/sbe" id="1" version="1" description="historical candles" byteOrder="bigEndian" package="datacenter">
+	<types>
+		<composite name="messageHeader" description="Message identifiers and length of message root">
+			<type name="blockLength" primitiveType="uint16"/>
+			<type name="templateId" primitiveType="uint16"/>
+			<type name="schemaId" primitiveType="uint16"/>
+			<type name="version" primitiveType="uint16"/>
+		</composite>
+		<composite name="groupSizeEncoding" description="Repeating group dimensions">
+			<type name="blockLength" primitiveType="uint16"/>
+			<type name="numInGroup" primitiveType="uint16"/>
+		</composite>
+	</types>
+	<types>
+		<enum name="Instrument" encodingType="uint8">
+			<validValue name="AUD_CAD">0</validValue>
+			<validValue name="AUD_CHF">1</validValue>
+			<validValue name="AUD_HKD">2</validValue>
+			<validValue name="AUD_JPY">3</validValue>
+			<validValue name="AUD_NZD">4</validValue>
+			<validValue name="AUD_SGD">5</validValue>
+			<validValue name="AUD_USD">6</validValue>
+			<validValue name="CAD_CHF">7</validValue>
+			<validValue name="CAD_HKD">8</validValue>
+			<validValue name="CAD_JPY">9</validValue>
+			<validValue name="CAD_SGD">10</validValue>
+			<validValue name="CHF_HKD">11</validValue>
+			<validValue name="CHF_JPY">12</validValue>
+			<validValue name="CHF_ZAR">13</validValue>
+			<validValue name="EUR_AUD">14</validValue>
+			<validValue name="EUR_CAD">15</validValue>
+			<validValue name="EUR_CHF">16</validValue>
+			<validValue name="EUR_CZK">17</validValue>
+			<validValue name="EUR_DKK">18</validValue>
+			<validValue name="EUR_GBP">19</validValue>
+			<validValue name="EUR_HKD">20</validValue>
+			<validValue name="EUR_HUF">21</validValue>
+			<validValue name="EUR_JPY">22</validValue>
+			<validValue name="EUR_NOK">23</validValue>
+			<validValue name="EUR_NZD">24</validValue>
+			<validValue name="EUR_PLN">25</validValue>
+			<validValue name="EUR_SEK">26</validValue>
+			<validValue name="EUR_SGD">27</validValue>
+			<validValue name="EUR_TRY">28</validValue>
+			<validValue name="EUR_USD">29</validValue>
+			<validValue name="EUR_ZAR">30</validValue>
+			<validValue name="GBP_AUD">31</validValue>
+			<validValue name="GBP_CAD">32</validValue>
+			<validValue name="GBP_CHF">33</validValue>
+			<validValue name="GBP_HKD">34</validValue>
+			<validValue name="GBP_JPY">35</validValue>
+			<validValue name="GBP_NZD">36</validValue>
+			<validValue name="GBP_PLN">37</validValue>
+			<validValue name="GBP_SGD">38</validValue>
+			<validValue name="GBP_USD">39</validValue>
+			<validValue name="GBP_ZAR">40</validValue>
+			<validValue name="HKD_JPY">41</validValue>
+			<validValue name="NZD_CAD">42</validValue>
+			<validValue name="NZD_CHF">43</validValue>
+			<validValue name="NZD_HKD">44</validValue>
+			<validValue name="NZD_JPY">45</validValue>
+			<validValue name="NZD_SGD">46</validValue>
+			<validValue name="NZD_USD">47</validValue>
+			<validValue name="SGD_CHF">48</validValue>
+			<validValue name="SGD_HKD">49</validValue>
+			<validValue name="SGD_JPY">50</validValue>
+			<validValue name="TRY_JPY">51</validValue>
+			<validValue name="USD_CAD">52</validValue>
+			<validValue name="USD_CHF">53</validValue>
+			<validValue name="USD_CNH">54</validValue>
+			<validValue name="USD_CZK">55</validValue>
+			<validValue name="USD_DKK">56</validValue>
+			<validValue name="USD_HKD">57</validValue>
+			<validValue name="USD_HUF">58</validValue>
+			<validValue name="USD_INR">59</validValue>
+			<validValue name="USD_JPY">60</validValue>
+			<validValue name="USD_MXN">61</validValue>
+			<validValue name="USD_NOK">62</validValue>
+			<validValue name="USD_PLN">63</validValue>
+			<validValue name="USD_SAR">64</validValue>
+			<validValue name="USD_SEK">65</validValue>
+			<validValue name="USD_SGD">66</validValue>
+			<validValue name="USD_THB">67</validValue>
+			<validValue name="USD_TRY">68</validValue>
+			<validValue name="USD_ZAR">69</validValue>
+			<validValue name="ZAR_JPY">70</validValue>
+			<validValue name="FINCOIN_USD">71</validValue>
+			<validValue name="SymbolBUTT">72</validValue>
+		</enum>
+		<enum name="Granularity" encodingType="uint8">
+			<validValue name="S5">0</validValue>
+			<validValue name="S10">1</validValue>
+			<validValue name="S15">2</validValue>
+			<validValue name="S30">3</validValue>
+			<validValue name="M1">4</validValue>
+			<validValue name="M5">5</validValue>
+			<validValue name="M10">6</validValue>
+			<validValue name="M15">7</validValue>
+			<validValue name="M30">8</validValue>
+			<validValue name="H1">9</validValue>
+			<validValue name="H4">10</validValue>
+			<validValue name="H12">11</validValue>
+			<validValue name="D">12</validValue>
+			<validValue name="W">13</validValue>
+			<validValue name="M">14</validValue>
+		</enum>
+		<enum name="BooleanType" encodingType="uint8">
+			<validValue name="T">0</validValue>
+			<validValue name="F">1</validValue>
+		</enum>
+	</types>
+	<types>
+		<type name="Number" primitiveType="uint32"/>
+		<type name="Volumn" primitiveType="uint32"/>
+		<type name="varStringEncoding" primitiveType="char" semanticType="String" length="32" characterEncoding="ASCII"/>
+	</types>
+	<sbe:message name="CandlesData" id="1">
+		<field name="instrument" id="1" type="Instrument"/>
+		<field name="granularity" id="2" type="Granularity"/>
+		<group name="candles" id="3" dimensionType="groupSizeEncoding">
+			<field name="openBid" id="4" type="Number"/>
+			<field name="openAsk" id="5" type="Number"/>
+			<field name="highBid" id="6" type="Number"/>
+			<field name="highAsk" id="7" type="Number"/>
+			<field name="lowBid" id="8" type="Number"/>
+			<field name="lowAsk" id="9" type="Number"/>
+			<field name="closeBid" id="10" type="Number"/>
+			<field name="closeAsk" id="11" type="Number"/>
+			<field name="volumn" id="12" type="Volumn"/>
+			<field name="complete" id="13" type="BooleanType"/>
+			<field name="time" id="14" type="varStringEncoding"/>
+		</group>
+	</sbe:message>
+</sbe:messageSchema>

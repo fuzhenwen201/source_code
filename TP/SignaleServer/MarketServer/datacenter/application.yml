@@ -1,0 +1,35 @@
+spring:
+    rabbitmq:
+        listener:
+            simple:
+                acknowledge-mode: none
+    datasource:
+        url: jdbc:sqlite:sqlite/group_security.db
+        driverClassName: org.sqlite.JDBC
+    jpa:
+        database-platform: cn.fintechstar.dc.constant.SQLiteDialect
+        show-sql: true
+    redis:
+        database: 3
+        host: 13.126.185.102
+        port: 5005
+        password: hugo123456
+        timeout: 2000
+        pool:
+            max-active: 10
+            max-idle: 8
+            min-idle: 0
+                
+mq:
+    host: rabbitmq
+    port: 5672
+    username: demo
+    password: demo
+    vhost: /demo
+    signalExchange: signal_grp
+    queue:
+        historySignalReq: HISTDATA_REQ_t
+        historySignalAns: DATACENTRE_ANS_t.msg.
+        
+maxCandlesOfSmallPacket: 50
+maxCandlesOfLargePacket: 2000

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintechstar.admin.dao.admin.IAdminDao">
+	
+	<sql id="adminColumn">
+		name, password, address, phoneno, isDeleted, isSuperAdmin 
+	</sql>
+
+	<select id="getAdminByAdminId" parameterType="int" resultType="Admin">
+		SELECT adminid, <include refid="adminColumn" />  FROM admin WHERE adminid = #{adminId} and isDeleted != 1
+	</select>
+	
+	<select id="isSuperAdmin" parameterType="int" resultType="int">
+		SELECT isSuperAdmin FROM admin WHERE adminid = #{adminId}
+	</select>
+	
+	<select id="getAdmins" resultType="AdminVo">
+		SELECT adminid, name, password, address, phoneno FROM admin WHERE isDeleted != 1 and isSuperAdmin != 1
+	</select>
+
+	<insert id="saveAdmin" parameterType="Admin" keyProperty="adminId" keyColumn="adminid"  useGeneratedKeys="true">
+		INSERT INTO admin(<include refid="adminColumn" />) 
+		VALUES(
+			#{name}, #{password}, #{address}, #{phoneNo}, 0, 0
+		)		
+	</insert>
+	
+	<update id="updateChangePasswordByAdminId">
+		UPDATE admin SET password = #{param2} WHERE adminid = #{param1} 
+	</update>
+	
+	<update id="updateAdmin" parameterType="Admin">
+		UPDATE admin SET 
+			name = #{name, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			address = #{address, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			password = #{password, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},
+			phoneno = #{phoneNo, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+		WHERE adminid = #{adminId}
+	</update>
+	
+	<update id="deleteAdmins" parameterType="java.util.List">
+		UPDATE admin SET isDeleted = 1 
+		WHERE adminid IN 
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>  	    
+	</update>
+
+</mapper>
