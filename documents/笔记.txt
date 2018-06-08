@@ -90,6 +90,10 @@ rabbitmqctl set_parameter federation-upstream 241_federation '{"uri":"amqp://dem
 
 {"userid":"1","symbol":"RKT/BTC","side":1,"price":10.101,"number":0.124}
 
+8、安装go环境
+  1）从https://golang.org/dl/中下载安装包
+  2）tar 解压该安装包 3）sudo mv go /user/local/ 4)export GOROOT=/usr/local/go;export PATH=$PATH:$GOROOT/bin 添加到.profile文件尾
+
 
 
 	
