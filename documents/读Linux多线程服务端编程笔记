@@ -1,0 +1,4 @@
+用到的boost非常少，可以用c++11代替，如function bind智能指针等等，特别是shared ptr和weak ptr在多线程中的应用深入理解下
+epoll相关api至少熟练：man 7 epoll认真看下啊，非阻塞socket api使用，stl容器基本算法要会，懂得迭代器失效等
+
+
